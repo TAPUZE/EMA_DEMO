@@ -1,0 +1,1378 @@
+<!-- ==================== GUIDED VISIT WORKFLOW PAGE ==================== -->
+
+<div class="p-6">
+    <!-- No Patient Selected Message -->
+    <div id="no-patient-selected" class="glass p-8 text-center">
+        <i class="ph ph-user-circle text-6xl text-gray-400 mb-4"></i>
+        <h2 class="text-xl font-bold text-gray-700 mb-2">No Patient Selected</h2>
+        <p class="text-gray-600 mb-4">Please select a patient before starting a visit.</p>
+        <button onclick="window.location.hash='patient-search'" class="btn-primary">
+            <i class="ph ph-magnifying-glass mr-2"></i>
+            Search Patients
+        </button>
+    </div>
+
+    <!-- Visit Type Selection -->
+    <div id="visit-type-selection" class="hidden">
+        <div class="glass p-6 mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Start New Visit</h1>
+            <div id="patient-info-header" class="bg-sky-50 p-4 rounded-lg mb-4"></div>
+            
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">Select Visit Type</h3>
+            
+            <!-- Recommended Visit Type -->
+            <div id="recommended-visit" class="bg-green-50 border-2 border-green-300 rounded-lg p-4 mb-4"></div>
+            
+            <!-- All Visit Types -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="visit-type-grid"></div>
+        </div>
+    </div>
+
+    <!-- Guided Visit Workflow -->
+    <div id="guided-visit-workflow" class="hidden">
+        <!-- Visit Header -->
+        <div class="glass p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800" id="visit-title"></h1>
+                    <p class="text-gray-600" id="visit-patient-info"></p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="save-progress-btn" class="btn-secondary">
+                        <i class="ph ph-floppy-disk mr-2"></i>
+                        Save Progress
+                    </button>
+                    <button id="complete-visit-btn" class="btn-primary">
+                        <i class="ph ph-check-circle mr-2"></i>
+                        Complete Visit
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Protocol Progress -->
+            <div class="bg-sky-50 p-4 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-semibold text-gray-700">Protocol Completion</span>
+                    <span id="completion-percentage" class="text-2xl font-bold text-sky-600">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="completion-progress-bar" class="bg-sky-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div class="mt-2 text-sm text-gray-600">
+                    <span id="completed-steps">0</span> of <span id="total-steps">0</span> required steps completed
+                </div>
+            </div>
+        </div>
+
+        <!-- Protocol Checklist -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-list-checks text-sky-600 mr-2"></i>
+                Protocol Checklist
+            </h3>
+            <div id="protocol-checklist" class="space-y-2"></div>
+        </div>
+
+        <!-- Documentation Sections (Dynamic based on protocol) -->
+        <div id="documentation-sections"></div>
+
+        <!-- Provider Communication Section -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-chat-circle-dots text-sky-600 mr-2"></i>
+                Provider Communication
+            </h3>
+            
+            <!-- Existing Notes for This Patient -->
+            <div id="existing-provider-notes" class="mb-4"></div>
+            
+            <!-- New Communication -->
+            <button id="new-provider-note-btn" class="btn-secondary w-full">
+                <i class="ph ph-plus mr-2"></i>
+                Send Note to Another Provider
+            </button>
+        </div>
+
+        <!-- Visit Summary -->
+        <div class="glass p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Visit Summary</h3>
+            <div id="visit-summary-content" class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-600">Complete the required protocol steps to generate visit summary.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Provider Note Modal -->
+<div id="provider-note-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Send Provider Note</h2>
+                <button onclick="document.getElementById('provider-note-modal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Template</label>
+                    <select id="provider-template-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="">Blank Note</option>
+                        <option value="consultation">Consultation Request</option>
+                        <option value="handoff">Patient Handoff</option>
+                        <option value="criticalResult">Critical Result Notification</option>
+                        <option value="medicationChange">Medication Change Notification</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">To Provider</label>
+                    <select id="to-provider-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="dr.cardio">Dr. Sarah Chen - Cardiology</option>
+                        <option value="dr.vascular">Dr. Michael Torres - Vascular Surgery</option>
+                        <option value="dr.nephro">Dr. Lisa Anderson - Nephrology</option>
+                        <option value="dr.endo">Dr. James Martinez - Endocrinology</option>
+                        <option value="dr.ortho">Dr. Patricia Kim - Orthopedics</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                    <input type="text" id="provider-note-subject" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Brief subject line">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <textarea id="provider-note-message" rows="10" class="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm" placeholder="Type your message here..."></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Urgency</label>
+                    <div class="flex gap-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="urgency" value="routine" checked class="mr-2">
+                            <span>Routine</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="urgency" value="urgent" class="mr-2">
+                            <span>Urgent</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="urgency" value="stat" class="mr-2">
+                            <span>STAT</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button id="send-provider-note-btn" class="btn-primary flex-1">
+                        <i class="ph ph-paper-plane-right mr-2"></i>
+                        Send Note
+                    </button>
+                    <button onclick="document.getElementById('provider-note-modal').classList.add('hidden')" class="btn-secondary flex-1">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { visitTemplates, getRecommendedVisitType, getProtocolSteps, validateVisitCompletion } from '../data/visit-templates.js';
+    import { providerMessages, getProviderMessagesByPatient, providerNoteTemplates, fillProviderTemplate, createProviderMessage } from '../data/provider-communications.js';
+    import { showToast } from '../js/ui-components.js';
+
+    let currentPatient = null;
+    let selectedVisitType = null;
+    let completedSteps = [];
+    let visitData = {};
+
+    window.initGuidedVisit = function() {
+        console.log('📋 Guided Visit page loaded');
+        
+        // Load patient
+        currentPatient = window.appState.currentPatient;
+        if (!currentPatient) {
+            const storedPatient = localStorage.getItem('currentPatient');
+            if (storedPatient) {
+                currentPatient = JSON.parse(storedPatient);
+                window.appState.currentPatient = currentPatient;
+            }
+        }
+        
+        if (!currentPatient) {
+            document.getElementById('no-patient-selected').classList.remove('hidden');
+            return;
+        }
+        
+        document.getElementById('no-patient-selected').classList.add('hidden');
+        showVisitTypeSelection();
+    };
+
+    function showVisitTypeSelection() {
+        document.getElementById('visit-type-selection').classList.remove('hidden');
+        
+        // Show patient info
+        document.getElementById('patient-info-header').innerHTML = `
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="font-semibold text-gray-800">${currentPatient.name}</div>
+                    <div class="text-sm text-gray-600">MRN: ${currentPatient.mrn} | DOB: ${currentPatient.dob} | Age: ${calculateAge(currentPatient.dob)}</div>
+                </div>
+                <div class="flex gap-2">
+                    ${currentPatient.flags.map(flag => `
+                        <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-700">${flag}</span>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        // Show recommended visit type
+        const recommended = getRecommendedVisitType(currentPatient);
+        const recommendedTemplate = visitTemplates[recommended.recommended];
+        
+        document.getElementById('recommended-visit').innerHTML = `
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="ph ph-star text-2xl"></i>
+                </div>
+                <div class="flex-grow">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-bold text-gray-800">${recommendedTemplate.name}</span>
+                        <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">RECOMMENDED</span>
+                    </div>
+                    <div class="text-sm text-gray-600 mb-2">${recommended.reason}</div>
+                    <button onclick="window.selectVisitType('${recommended.recommended}')" class="btn-primary btn-sm">
+                        Start ${recommendedTemplate.name}
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Show all visit types
+        const grid = document.getElementById('visit-type-grid');
+        grid.innerHTML = Object.keys(visitTemplates).map(key => {
+            const template = visitTemplates[key];
+            return `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-sky-500 hover:shadow-md transition-all cursor-pointer" onclick="window.selectVisitType('${key}')">
+                    <h4 class="font-semibold text-gray-800 mb-2">${template.name}</h4>
+                    <div class="text-xs text-gray-600 mb-2">Code: ${template.code}</div>
+                    <div class="text-sm text-gray-600 mb-3">${template.protocol.steps.length} protocol steps</div>
+                    <button class="btn-secondary btn-sm w-full">Select</button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.selectVisitType = function(visitType) {
+        selectedVisitType = visitType;
+        completedSteps = [];
+        visitData = {
+            patient: currentPatient,
+            visitType: visitType,
+            startTime: new Date().toISOString(),
+            completedSections: []
+        };
+        
+        document.getElementById('visit-type-selection').classList.add('hidden');
+        document.getElementById('guided-visit-workflow').classList.remove('hidden');
+        
+        initializeWorkflow();
+    };
+
+    function initializeWorkflow() {
+        const template = visitTemplates[selectedVisitType];
+        
+        // Set visit title
+        document.getElementById('visit-title').textContent = template.name;
+        document.getElementById('visit-patient-info').textContent = `${currentPatient.name} (MRN: ${currentPatient.mrn}) - ${new Date().toLocaleDateString()}`;
+        
+        // Initialize protocol checklist
+        renderProtocolChecklist();
+        
+        // Render documentation sections
+        renderDocumentationSections();
+        
+        // Load existing provider notes for this patient
+        loadProviderNotes();
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        updateProgress();
+    }
+
+    function renderProtocolChecklist() {
+        const template = visitTemplates[selectedVisitType];
+        const checklist = document.getElementById('protocol-checklist');
+        
+        checklist.innerHTML = template.protocol.steps.map(step => `
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg protocol-step" data-step="${step.section}">
+                <div class="flex-shrink-0">
+                    <input type="checkbox" class="w-5 h-5 text-sky-600 rounded" onchange="window.toggleStepCompletion('${step.section}', this.checked)">
+                </div>
+                <div class="flex-grow">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-gray-800">${step.order}. ${step.description}</span>
+                        ${step.required ? '<span class="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700">REQUIRED</span>' : ''}
+                    </div>
+                </div>
+                <button onclick="window.scrollToSection('${step.section}')" class="text-sky-600 hover:text-sky-700">
+                    <i class="ph ph-arrow-down"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function renderDocumentationSections() {
+        const template = visitTemplates[selectedVisitType];
+        const container = document.getElementById('documentation-sections');
+        
+        container.innerHTML = template.protocol.steps.map(step => `
+            <div class="glass p-6 mb-6" id="section-${step.section}">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">
+                    ${step.order}. ${step.description}
+                    ${step.required ? '<span class="text-red-500">*</span>' : ''}
+                </h3>
+                <div class="documentation-content">
+                    ${getDocumentationTemplate(step.section)}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function getDocumentationTemplate(section) {
+        // Return appropriate structured input fields based on section type
+        switch(section) {
+            case 'vitals':
+                return `
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">BP</label>
+                            <input type="text" placeholder="120/80" class="form-input" data-section="vitals" data-field="bp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">HR</label>
+                            <input type="number" placeholder="72" class="form-input" data-section="vitals" data-field="hr">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Temp (°F)</label>
+                            <input type="number" step="0.1" placeholder="98.6" class="form-input" data-section="vitals" data-field="temp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Weight (lbs)</label>
+                            <input type="number" placeholder="165" class="form-input" data-section="vitals" data-field="weight">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Height (in)</label>
+                            <input type="number" placeholder="67" class="form-input" data-section="vitals" data-field="height">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">O2 Sat (%)</label>
+                            <input type="number" placeholder="98" class="form-input" data-section="vitals" data-field="o2sat">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">BMI</label>
+                            <input type="number" step="0.1" placeholder="Auto-calc" class="form-input bg-gray-50" data-section="vitals" data-field="bmi" readonly>
+                        </div>
+                    </div>
+                `;
+            
+            case 'healthRiskAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Overall Health Status</label>
+                            <select class="form-input" data-section="healthRiskAssessment" data-field="overallHealth">
+                                <option value="">Select...</option>
+                                <option value="excellent">Excellent</option>
+                                <option value="very-good">Very Good</option>
+                                <option value="good">Good</option>
+                                <option value="fair">Fair</option>
+                                <option value="poor">Poor</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Physical Activity</label>
+                            <select class="form-input" data-section="healthRiskAssessment" data-field="activity">
+                                <option value="">Select...</option>
+                                <option value="sedentary">Sedentary</option>
+                                <option value="light">Light (1-2 days/week)</option>
+                                <option value="moderate">Moderate (3-5 days/week)</option>
+                                <option value="active">Active (6-7 days/week)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Tobacco Use</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center"><input type="radio" name="tobacco" value="never" class="mr-2" data-section="healthRiskAssessment"> Never</label>
+                                <label class="flex items-center"><input type="radio" name="tobacco" value="former" class="mr-2" data-section="healthRiskAssessment"> Former</label>
+                                <label class="flex items-center"><input type="radio" name="tobacco" value="current" class="mr-2" data-section="healthRiskAssessment"> Current</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Alcohol (drinks/week)</label>
+                            <input type="number" placeholder="0" class="form-input" data-section="healthRiskAssessment" data-field="alcohol">
+                        </div>
+                    </div>
+                `;
+            
+            case 'depressionScreening':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h4 class="font-semibold mb-2">PHQ-2 Screening</h4>
+                            <p class="text-sm text-gray-600">Over the past 2 weeks:</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">1. Little interest or pleasure in doing things?</label>
+                            <select class="form-input" data-section="depressionScreening" data-field="phq2_q1">
+                                <option value="">Select...</option>
+                                <option value="0">Not at all (0)</option>
+                                <option value="1">Several days (1)</option>
+                                <option value="2">More than half the days (2)</option>
+                                <option value="3">Nearly every day (3)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">2. Feeling down, depressed, or hopeless?</label>
+                            <select class="form-input" data-section="depressionScreening" data-field="phq2_q2">
+                                <option value="">Select...</option>
+                                <option value="0">Not at all (0)</option>
+                                <option value="1">Several days (1)</option>
+                                <option value="2">More than half the days (2)</option>
+                                <option value="3">Nearly every day (3)</option>
+                            </select>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <strong>PHQ-2 Score: </strong><span id="phq2-score" class="text-xl font-bold">0</span>
+                            <p class="text-sm text-gray-600 mt-1">Score ≥3: PHQ-9 indicated</p>
+                        </div>
+                    </div>
+                `;
+            
+            case 'fallRiskAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Falls in past 12 months</label>
+                            <select class="form-input" data-section="fallRiskAssessment" data-field="falls">
+                                <option value="">Select...</option>
+                                <option value="0">No falls</option>
+                                <option value="1">1 fall, no injury</option>
+                                <option value="2+">2+ falls or 1 with injury</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Gait Assessment</label>
+                            <select class="form-input" data-section="fallRiskAssessment" data-field="gait">
+                                <option value="">Select...</option>
+                                <option value="normal">Normal, steady</option>
+                                <option value="slow">Slow, uses assistive device</option>
+                                <option value="unsteady">Unsteady, requires assistance</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Interventions</label>
+                            <textarea rows="2" placeholder="Education, PT referral, home safety..." class="w-full px-3 py-2 border rounded-lg" data-section="fallRiskAssessment" data-field="interventions"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            case 'functionalAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">ADLs & IADLs Assessment</h4>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Bathing</label>
+                                <select class="form-input" data-section="functionalAssessment" data-field="bathing">
+                                    <option value="">Select...</option>
+                                    <option value="independent">Independent</option>
+                                    <option value="assistance">Needs assistance</option>
+                                    <option value="dependent">Dependent</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Dressing</label>
+                                <select class="form-input" data-section="functionalAssessment" data-field="dressing">
+                                    <option value="">Select...</option>
+                                    <option value="independent">Independent</option>
+                                    <option value="assistance">Needs assistance</option>
+                                    <option value="dependent">Dependent</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Medications</label>
+                                <select class="form-input" data-section="functionalAssessment" data-field="medications">
+                                    <option value="">Select...</option>
+                                    <option value="independent">Independent</option>
+                                    <option value="assistance">Needs assistance</option>
+                                    <option value="unable">Unable</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Shopping</label>
+                                <select class="form-input" data-section="functionalAssessment" data-field="shopping">
+                                    <option value="">Select...</option>
+                                    <option value="independent">Independent</option>
+                                    <option value="assistance">Needs assistance</option>
+                                    <option value="unable">Unable</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            
+            case 'cognitiveAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Screening Indicated?</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center"><input type="radio" name="cogScreen" value="yes" class="mr-2" data-section="cognitiveAssessment"> Yes</label>
+                                <label class="flex items-center"><input type="radio" name="cogScreen" value="no" class="mr-2" data-section="cognitiveAssessment"> No concerns</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Notes</label>
+                            <textarea rows="2" placeholder="Assessment notes..." class="w-full px-3 py-2 border rounded-lg" data-section="cognitiveAssessment" data-field="notes"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            case 'advanceCareDirectives':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Advance Directive on File?</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center"><input type="radio" name="adFile" value="yes" class="mr-2" data-section="advanceCareDirectives"> Yes</label>
+                                <label class="flex items-center"><input type="radio" name="adFile" value="no" class="mr-2" data-section="advanceCareDirectives"> No</label>
+                                <label class="flex items-center"><input type="radio" name="adFile" value="declined" class="mr-2" data-section="advanceCareDirectives"> Declined</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Healthcare Proxy?</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center"><input type="radio" name="proxy" value="yes" class="mr-2" data-section="advanceCareDirectives"> Yes</label>
+                                <label class="flex items-center"><input type="radio" name="proxy" value="no" class="mr-2" data-section="advanceCareDirectives"> No</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Discussion Notes</label>
+                            <textarea rows="2" placeholder="Goals of care, preferences..." class="w-full px-3 py-2 border rounded-lg" data-section="advanceCareDirectives" data-field="notes"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            case 'preventiveServices':
+            case 'screenings':
+                return `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-2 bg-white border rounded">
+                            <div class="flex-grow">
+                                <div class="font-medium text-sm">Mammogram</div>
+                                <input type="date" class="text-xs border-0" data-section="preventiveServices" data-field="mammogram_date">
+                            </div>
+                            <select class="form-input w-28 text-sm" data-section="preventiveServices" data-field="mammogram_status">
+                                <option value="current">Current</option>
+                                <option value="due">Due</option>
+                                <option value="overdue">Overdue</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-white border rounded">
+                            <div class="flex-grow">
+                                <div class="font-medium text-sm">Colonoscopy</div>
+                                <input type="date" class="text-xs border-0" data-section="preventiveServices" data-field="colonoscopy_date">
+                            </div>
+                            <select class="form-input w-28 text-sm" data-section="preventiveServices" data-field="colonoscopy_status">
+                                <option value="current">Current</option>
+                                <option value="due">Due</option>
+                                <option value="overdue">Overdue</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-white border rounded">
+                            <div class="flex-grow">
+                                <div class="font-medium text-sm">Flu Vaccine</div>
+                                <input type="date" class="text-xs border-0" data-section="preventiveServices" data-field="flu_date">
+                            </div>
+                            <select class="form-input w-28 text-sm" data-section="preventiveServices" data-field="flu_status">
+                                <option value="current">Current</option>
+                                <option value="due">Due</option>
+                                <option value="declined">Declined</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Screenings Ordered Today</label>
+                            <textarea rows="2" placeholder="List screenings ordered..." class="w-full px-3 py-2 border rounded-lg" data-section="preventiveServices" data-field="ordered"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            case 'chiefComplaint':
+                return `<textarea rows="3" placeholder="Patient's primary reason for visit..." class="w-full px-3 py-2 border rounded-lg" data-section="chiefComplaint"></textarea>`;
+            
+            case 'assessment':
+                return `
+                    <div class="space-y-3">
+                        <textarea rows="5" placeholder="Assessment and clinical impression..." class="w-full px-3 py-2 border rounded-lg" data-section="assessment" data-field="clinical"></textarea>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">ICD-10 Codes</label>
+                            <input type="text" placeholder="E11.9, I10, E78.5" class="form-input" data-section="assessment" data-field="icd10">
+                        </div>
+                    </div>
+                `;
+            
+            case 'plan':
+                return `
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Treatment Plan</label>
+                            <textarea rows="4" placeholder="Medications, therapies, interventions..." class="w-full px-3 py-2 border rounded-lg" data-section="plan" data-field="treatment"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Patient Education</label>
+                            <textarea rows="2" placeholder="Topics discussed..." class="w-full px-3 py-2 border rounded-lg" data-section="plan" data-field="education"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Follow-up</label>
+                            <input type="text" placeholder="Return in 3 months, call with labs, etc." class="form-input" data-section="plan" data-field="followup">
+                        </div>
+                    </div>
+                `;
+            
+            // Chronic Disease Review (CCM visits)
+            case 'chronicDiseaseReview':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-orange-50 p-3 rounded">
+                            <h4 class="font-semibold text-sm mb-2">Active Chronic Conditions</h4>
+                            <div class="space-y-3">
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" data-section="chronicDiseaseReview" value="diabetes">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Diabetes</div>
+                                        <input type="text" placeholder="Control status, complications..." class="form-input text-sm mt-1" data-field="diabetes_status">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" data-section="chronicDiseaseReview" value="hypertension">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Hypertension</div>
+                                        <input type="text" placeholder="BP control, target goals..." class="form-input text-sm mt-1" data-field="htn_status">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" data-section="chronicDiseaseReview" value="chf">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">CHF</div>
+                                        <input type="text" placeholder="NYHA class, symptoms..." class="form-input text-sm mt-1" data-field="chf_status">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" data-section="chronicDiseaseReview" value="copd">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">COPD/Asthma</div>
+                                        <input type="text" placeholder="Exacerbations, inhaler use..." class="form-input text-sm mt-1" data-field="copd_status">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" data-section="chronicDiseaseReview" value="ckd">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">CKD</div>
+                                        <input type="text" placeholder="Stage, GFR, proteinuria..." class="form-input text-sm mt-1" data-field="ckd_status">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Overall Assessment</label>
+                            <textarea rows="3" placeholder="Summary of chronic disease management..." class="w-full px-3 py-2 border rounded-lg" data-section="chronicDiseaseReview" data-field="summary"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            // Medication Reconciliation
+            case 'medicationReconciliation':
+            case 'medications':
+            case 'medicationReview':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Medication Reconciliation</h4>
+                            <p class="text-xs text-gray-600 mt-1">Review all current medications for accuracy and adherence</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Medication Adherence</label>
+                            <select class="form-input" data-section="medicationReconciliation" data-field="adherence">
+                                <option value="">Select...</option>
+                                <option value="excellent">Excellent - Taking all as prescribed</option>
+                                <option value="good">Good - Occasional missed doses</option>
+                                <option value="fair">Fair - Frequent missed doses</option>
+                                <option value="poor">Poor - Not taking regularly</option>
+                                <option value="non-adherent">Non-adherent</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Barriers to Adherence (check all that apply)</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="cost" data-section="medicationReconciliation"> Cost/affordability</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="side-effects" data-section="medicationReconciliation"> Side effects</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="complexity" data-section="medicationReconciliation"> Regimen too complex</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="forgetfulness" data-section="medicationReconciliation"> Forgetfulness</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="access" data-section="medicationReconciliation"> Pharmacy access issues</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Medications Reviewed</label>
+                            <textarea rows="3" placeholder="List current medications reviewed with patient..." class="w-full px-3 py-2 border rounded-lg" data-section="medicationReconciliation" data-field="list"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Changes Made</label>
+                            <textarea rows="2" placeholder="New medications, discontinued, dose changes..." class="w-full px-3 py-2 border rounded-lg" data-section="medicationReconciliation" data-field="changes"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            // Lab Review with Upload
+            case 'labReview':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Laboratory Results Review</h4>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <i class="ph ph-file-arrow-up text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600 mb-2">Upload Lab Results (PDF, JPG, PNG)</p>
+                            <input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple class="hidden" id="lab-upload-${section}" data-section="labReview">
+                            <button onclick="document.getElementById('lab-upload-${section}').click()" class="btn-secondary btn-sm">
+                                <i class="ph ph-upload-simple mr-2"></i>Choose Files
+                            </button>
+                            <div id="lab-files-list" class="mt-3 text-left"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">HbA1c</label>
+                                <div class="flex gap-2">
+                                    <input type="number" step="0.1" placeholder="7.2" class="form-input flex-grow" data-section="labReview" data-field="hba1c">
+                                    <input type="date" class="form-input" data-section="labReview" data-field="hba1c_date">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Creatinine</label>
+                                <div class="flex gap-2">
+                                    <input type="number" step="0.1" placeholder="1.1" class="form-input flex-grow" data-section="labReview" data-field="creatinine">
+                                    <input type="date" class="form-input" data-section="labReview" data-field="creatinine_date">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">LDL</label>
+                                <div class="flex gap-2">
+                                    <input type="number" placeholder="95" class="form-input flex-grow" data-section="labReview" data-field="ldl">
+                                    <input type="date" class="form-input" data-section="labReview" data-field="ldl_date">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">eGFR</label>
+                                <div class="flex gap-2">
+                                    <input type="number" placeholder="65" class="form-input flex-grow" data-section="labReview" data-field="egfr">
+                                    <input type="date" class="form-input" data-section="labReview" data-field="egfr_date">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Clinical Significance</label>
+                            <textarea rows="3" placeholder="Interpretation, trends, action items..." class="w-full px-3 py-2 border rounded-lg" data-section="labReview" data-field="interpretation"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            // Care Coordination
+            case 'careCoordination':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Specialist Referrals (check all that apply)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="cardiology" data-section="careCoordination"> Cardiology</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="endocrine" data-section="careCoordination"> Endocrinology</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="nephrology" data-section="careCoordination"> Nephrology</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="pulmonology" data-section="careCoordination"> Pulmonology</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="neurology" data-section="careCoordination"> Neurology</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="pt" data-section="careCoordination"> Physical Therapy</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="dietician" data-section="careCoordination"> Dietician</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="home-health" data-section="careCoordination"> Home Health</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Coordination Activities</label>
+                            <textarea rows="3" placeholder="Communication with specialists, follow-up on referrals, DME orders..." class="w-full px-3 py-2 border rounded-lg" data-section="careCoordination" data-field="activities"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Pending Results/Follow-up</label>
+                            <textarea rows="2" placeholder="Labs pending, imaging ordered, specialist appointments scheduled..." class="w-full px-3 py-2 border rounded-lg" data-section="careCoordination" data-field="pending"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            // Patient Education
+            case 'patientEducation':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Education Topics Covered (check all that apply)</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="disease-process" data-section="patientEducation"> Disease process and management</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="medications" data-section="patientEducation"> Medication instructions</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="diet" data-section="patientEducation"> Diet and nutrition</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="exercise" data-section="patientEducation"> Exercise and activity</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="monitoring" data-section="patientEducation"> Home monitoring (BP, glucose, etc.)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="warning-signs" data-section="patientEducation"> Warning signs/when to call</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="prevention" data-section="patientEducation"> Disease prevention</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Patient Understanding</label>
+                            <select class="form-input" data-section="patientEducation" data-field="understanding">
+                                <option value="">Select...</option>
+                                <option value="excellent">Excellent - Verbalizes understanding</option>
+                                <option value="good">Good - Understands with clarification</option>
+                                <option value="fair">Fair - Needs reinforcement</option>
+                                <option value="poor">Poor - Comprehension concerns</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Materials Provided</label>
+                            <input type="text" placeholder="Handouts, websites, resources..." class="form-input" data-section="patientEducation" data-field="materials">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Education Notes</label>
+                            <textarea rows="2" placeholder="Additional education details..." class="w-full px-3 py-2 border rounded-lg" data-section="patientEducation" data-field="notes"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            // Interval History
+            case 'intervalHistory':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Changes Since Last Visit</label>
+                            <textarea rows="3" placeholder="New symptoms, hospitalizations, ER visits, specialist visits..." class="w-full px-3 py-2 border rounded-lg" data-section="intervalHistory" data-field="changes"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Hospitalizations/ER Visits</label>
+                            <div class="flex gap-4 mb-2">
+                                <label class="flex items-center"><input type="radio" name="hosp" value="none" class="mr-2" data-section="intervalHistory"> None</label>
+                                <label class="flex items-center"><input type="radio" name="hosp" value="yes" class="mr-2" data-section="intervalHistory"> Yes</label>
+                            </div>
+                            <textarea rows="2" placeholder="If yes, describe reason, dates, outcomes..." class="w-full px-3 py-2 border rounded-lg" data-section="intervalHistory" data-field="hospitalizations"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">New Medications Started</label>
+                            <textarea rows="2" placeholder="Medications started by other providers..." class="w-full px-3 py-2 border rounded-lg" data-section="intervalHistory" data-field="newMeds"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            // Physical Exam
+            case 'physicalExam':
+            case 'physicalExamination':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-green-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Focused Physical Examination</h4>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">General Appearance</label>
+                                <select class="form-input" data-section="physicalExam" data-field="general">
+                                    <option value="">Select...</option>
+                                    <option value="wdwn">Well-developed, well-nourished</option>
+                                    <option value="nad">No acute distress</option>
+                                    <option value="ill">Ill-appearing</option>
+                                    <option value="distress">In distress</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">HEENT</label>
+                                <select class="form-input" data-section="physicalExam" data-field="heent">
+                                    <option value="">Select...</option>
+                                    <option value="normal">Normocephalic, atraumatic</option>
+                                    <option value="abnormal">See notes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Cardiovascular</label>
+                                <select class="form-input" data-section="physicalExam" data-field="cv">
+                                    <option value="">Select...</option>
+                                    <option value="rrr">RRR, no murmurs</option>
+                                    <option value="irregular">Irregular rhythm</option>
+                                    <option value="murmur">Murmur present</option>
+                                    <option value="abnormal">See notes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Respiratory</label>
+                                <select class="form-input" data-section="physicalExam" data-field="resp">
+                                    <option value="">Select...</option>
+                                    <option value="ctab">Clear to auscultation bilaterally</option>
+                                    <option value="wheezes">Wheezes</option>
+                                    <option value="crackles">Crackles/rales</option>
+                                    <option value="abnormal">See notes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Abdomen</label>
+                                <select class="form-input" data-section="physicalExam" data-field="abdomen">
+                                    <option value="">Select...</option>
+                                    <option value="soft">Soft, non-tender, non-distended</option>
+                                    <option value="tender">Tender</option>
+                                    <option value="distended">Distended</option>
+                                    <option value="abnormal">See notes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Extremities</label>
+                                <select class="form-input" data-section="physicalExam" data-field="extremities">
+                                    <option value="">Select...</option>
+                                    <option value="no-edema">No edema, pulses intact</option>
+                                    <option value="edema">Edema present</option>
+                                    <option value="abnormal">See notes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Additional Findings</label>
+                            <textarea rows="3" placeholder="Detailed exam findings..." class="w-full px-3 py-2 border rounded-lg" data-section="physicalExam" data-field="notes"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            // Diabetes-specific sections
+            case 'footExam':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Comprehensive Diabetic Foot Exam</h4>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Inspection</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2" value="normal" data-section="footExam"> Normal skin</label>
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2" value="callus" data-section="footExam"> Calluses/corns</label>
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2" value="deformity" data-section="footExam"> Deformities</label>
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2" value="ulcer" data-section="footExam"> Ulceration</label>
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2" value="nail" data-section="footExam"> Nail abnormalities</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Sensation (Monofilament)</label>
+                                <select class="form-input" data-section="footExam" data-field="sensation">
+                                    <option value="">Select...</option>
+                                    <option value="intact">Intact bilaterally</option>
+                                    <option value="decreased">Decreased sensation</option>
+                                    <option value="absent">Absent sensation</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Pulses</label>
+                                <select class="form-input" data-section="footExam" data-field="pulses">
+                                    <option value="">Select...</option>
+                                    <option value="2+">2+ bilaterally</option>
+                                    <option value="1+">1+ diminished</option>
+                                    <option value="absent">Absent</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Risk Category</label>
+                                <select class="form-input" data-section="footExam" data-field="risk">
+                                    <option value="">Select...</option>
+                                    <option value="low">Low risk</option>
+                                    <option value="moderate">Moderate risk</option>
+                                    <option value="high">High risk</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Education & Plan</label>
+                            <textarea rows="2" placeholder="Foot care education, referrals, interventions..." class="w-full px-3 py-2 border rounded-lg" data-section="footExam" data-field="plan"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            case 'glucoseReview':
+            case 'hba1cReview':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Current HbA1c</label>
+                                <div class="flex gap-2">
+                                    <input type="number" step="0.1" placeholder="7.2" class="form-input" data-section="glucoseReview" data-field="hba1c">
+                                    <span class="self-center text-sm">%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Previous HbA1c</label>
+                                <div class="flex gap-2">
+                                    <input type="number" step="0.1" placeholder="8.1" class="form-input" data-section="glucoseReview" data-field="prev_hba1c">
+                                    <span class="self-center text-sm">%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Target Goal</label>
+                                <input type="text" placeholder="<7.0%" class="form-input" data-section="glucoseReview" data-field="goal">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Home Glucose Monitoring</label>
+                            <select class="form-input" data-section="glucoseReview" data-field="monitoring">
+                                <option value="">Select...</option>
+                                <option value="regular">Regular monitoring</option>
+                                <option value="irregular">Irregular monitoring</option>
+                                <option value="not-monitoring">Not monitoring</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Hypoglycemic Episodes</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center"><input type="radio" name="hypo" value="none" class="mr-2" data-section="glucoseReview"> None</label>
+                                <label class="flex items-center"><input type="radio" name="hypo" value="rare" class="mr-2" data-section="glucoseReview"> Rare</label>
+                                <label class="flex items-center"><input type="radio" name="hypo" value="frequent" class="mr-2" data-section="glucoseReview"> Frequent</label>
+                            </div>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <i class="ph ph-file-arrow-up text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600 mb-2">Upload Glucose Log</p>
+                            <input type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.csv" class="hidden" id="glucose-upload" data-section="glucoseReview">
+                            <button onclick="document.getElementById('glucose-upload').click()" class="btn-secondary btn-sm">
+                                <i class="ph ph-upload-simple mr-2"></i>Choose File
+                            </button>
+                        </div>
+                    </div>
+                `;
+            
+            case 'hypoglycemiaScreen':
+            case 'complications':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Diabetes Complications Screening</label>
+                            <div class="space-y-3">
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" value="retinopathy" data-section="complications">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Retinopathy</div>
+                                        <input type="text" placeholder="Last eye exam date, results..." class="form-input text-sm mt-1" data-field="retinopathy_notes">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" value="nephropathy" data-section="complications">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Nephropathy</div>
+                                        <input type="text" placeholder="eGFR, microalbumin..." class="form-input text-sm mt-1" data-field="nephropathy_notes">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" value="neuropathy" data-section="complications">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Neuropathy</div>
+                                        <input type="text" placeholder="Monofilament test, symptoms..." class="form-input text-sm mt-1" data-field="neuropathy_notes">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" value="cvd" data-section="complications">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Cardiovascular Disease</div>
+                                        <input type="text" placeholder="CAD, stroke, PAD..." class="form-input text-sm mt-1" data-field="cvd_notes">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            
+            // HPI and other narrative sections
+            case 'hpi':
+            case 'historyOfPresentIllness':
+                return `
+                    <div class="space-y-3">
+                        <div class="bg-yellow-50 p-3 rounded">
+                            <p class="text-sm text-gray-700"><strong>Document:</strong> Onset, Location, Duration, Character, Aggravating/Alleviating factors, Radiation, Timing, Severity</p>
+                        </div>
+                        <textarea rows="6" placeholder="Detailed history of present illness..." class="w-full px-3 py-2 border rounded-lg" data-section="hpi"></textarea>
+                    </div>
+                `;
+            
+            case 'pastMedicalHistory':
+            case 'allergies':
+            case 'familyHistory':
+            case 'socialHistory':
+            case 'reviewOfSystems':
+                return `
+                    <div class="space-y-3">
+                        <textarea rows="5" placeholder="Enter ${section} details..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}"></textarea>
+                    </div>
+                `;
+            
+            // Demographics
+            case 'demographics':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Insurance Verified</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center"><input type="radio" name="insurance-verified" value="yes" class="mr-2" data-section="demographics"> Yes</label>
+                                    <label class="flex items-center"><input type="radio" name="insurance-verified" value="no" class="mr-2" data-section="demographics"> No</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Contact Info Current</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center"><input type="radio" name="contact-current" value="yes" class="mr-2" data-section="demographics"> Yes</label>
+                                    <label class="flex items-center"><input type="radio" name="contact-current" value="no" class="mr-2" data-section="demographics"> No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Updates Needed</label>
+                            <textarea rows="2" placeholder="Any demographic updates..." class="w-full px-3 py-2 border rounded-lg" data-section="demographics" data-field="updates"></textarea>
+                        </div>
+                    </div>
+                `;
+            
+            default:
+                return `
+                    <div class="space-y-3">
+                        <textarea rows="4" placeholder="Enter documentation..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}"></textarea>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <i class="ph ph-file-arrow-up text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600 mb-2">Upload Supporting Documents</p>
+                            <input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple class="hidden" id="doc-upload-${section}" data-section="${section}">
+                            <button onclick="document.getElementById('doc-upload-${section}').click()" class="btn-secondary btn-sm">
+                                <i class="ph ph-upload-simple mr-2"></i>Choose Files
+                            </button>
+                        </div>
+                    </div>
+                `;
+        }
+    }
+
+    function loadProviderNotes() {
+        const notes = getProviderMessagesByPatient(currentPatient.id);
+        const container = document.getElementById('existing-provider-notes');
+        
+        if (notes.length === 0) {
+            container.innerHTML = `<p class="text-sm text-gray-600">No provider communications for this patient.</p>`;
+            return;
+        }
+        
+        container.innerHTML = `
+            <div class="mb-2 font-semibold text-gray-700">Recent Provider Communications:</div>
+            ${notes.map(note => `
+                <div class="border-l-4 ${note.urgency === 'stat' ? 'border-red-500' : note.urgency === 'urgent' ? 'border-orange-500' : 'border-gray-300'} bg-gray-50 p-3 mb-2 rounded">
+                    <div class="flex items-start justify-between mb-1">
+                        <div class="font-medium text-sm">${note.subject}</div>
+                        <div class="text-xs text-gray-500">${new Date(note.date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="text-xs text-gray-600 mb-1">
+                        From: ${note.fromProvider.name} (${note.fromProvider.specialty}) → To: ${note.toProvider.name}
+                    </div>
+                    <div class="text-sm text-gray-700">${note.message.substring(0, 150)}${note.message.length > 150 ? '...' : ''}</div>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    function setupEventListeners() {
+        // Save progress
+        document.getElementById('save-progress-btn').addEventListener('click', saveProgress);
+        
+        // Complete visit
+        document.getElementById('complete-visit-btn').addEventListener('click', completeVisit);
+        
+        // New provider note
+        document.getElementById('new-provider-note-btn').addEventListener('click', openProviderNoteModal);
+        
+        // Template selection
+        document.getElementById('provider-template-select').addEventListener('change', fillProviderTemplateForm);
+        
+        // Send provider note
+        document.getElementById('send-provider-note-btn').addEventListener('click', sendProviderNote);
+        
+        // Track input changes
+        document.querySelectorAll('.form-input, textarea[data-section]').forEach(input => {
+            input.addEventListener('input', () => {
+                const section = input.getAttribute('data-section');
+                if (input.value.trim()) {
+                    markStepComplete(section);
+                }
+            });
+        });
+    }
+
+    window.toggleStepCompletion = function(section, checked) {
+        if (checked) {
+            markStepComplete(section);
+        } else {
+            completedSteps = completedSteps.filter(s => s !== section);
+            updateProgress();
+        }
+    };
+
+    function markStepComplete(section) {
+        if (!completedSteps.includes(section)) {
+            completedSteps.push(section);
+            const checkbox = document.querySelector(`.protocol-step[data-step="${section}"] input[type="checkbox"]`);
+            if (checkbox) checkbox.checked = true;
+            updateProgress();
+        }
+    }
+
+    window.scrollToSection = function(section) {
+        document.getElementById(`section-${section}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    function updateProgress() {
+        const template = visitTemplates[selectedVisitType];
+        const totalRequired = template.protocol.steps.filter(s => s.required).length;
+        const completed = completedSteps.length;
+        const percentage = Math.round((completed / totalRequired) * 100);
+        
+        document.getElementById('completion-percentage').textContent = percentage + '%';
+        document.getElementById('completion-progress-bar').style.width = percentage + '%';
+        document.getElementById('completed-steps').textContent = completed;
+        document.getElementById('total-steps').textContent = totalRequired;
+    }
+
+    function saveProgress() {
+        visitData.completedSections = completedSteps;
+        visitData.lastSaved = new Date().toISOString();
+        localStorage.setItem('currentVisit', JSON.stringify(visitData));
+        showToast('Visit progress saved', 'success');
+    }
+
+    function completeVisit() {
+        const validation = validateVisitCompletion(selectedVisitType, completedSteps);
+        
+        if (!validation.valid) {
+            showToast(`Missing required sections: ${validation.missing.join(', ')}`, 'error');
+            return;
+        }
+        
+        visitData.completedSections = completedSteps;
+        visitData.completedTime = new Date().toISOString();
+        visitData.status = 'completed';
+        visitData.visitId = 'v_' + Date.now();
+        visitData.provider = 'Dr. Ange Pompee';
+        
+        // Collect form data from documentation sections
+        collectFormData();
+        
+        // Save to patient-specific visit history in localStorage
+        const visitStorageKey = 'patientVisits_' + currentPatient.id;
+        const existingVisits = JSON.parse(localStorage.getItem(visitStorageKey) || '[]');
+        existingVisits.push(visitData);
+        localStorage.setItem(visitStorageKey, JSON.stringify(existingVisits));
+        
+        // Also update the current patient object if it has visits array
+        if (!currentPatient.visits) currentPatient.visits = [];
+        currentPatient.visits.unshift(visitData);
+        localStorage.setItem('currentPatient', JSON.stringify(currentPatient));
+        
+        // Clear current visit draft
+        localStorage.removeItem('currentVisit');
+        
+        showToast('Visit completed and saved successfully!', 'success');
+        
+        // Navigate back to patient chart visits tab
+        setTimeout(() => {
+            window.location.hash = 'patient-chart';
+        }, 1500);
+    }
+    
+    function collectFormData() {
+        // Collect data from all input fields
+        document.querySelectorAll('input[data-section], textarea[data-section], select[data-section]').forEach(field => {
+            const section = field.getAttribute('data-section');
+            const value = field.value.trim();
+            if (value) {
+                if (!visitData.formData) visitData.formData = {};
+                if (!visitData.formData[section]) visitData.formData[section] = {};
+                visitData.formData[section][field.name || field.id || 'value'] = value;
+            }
+        });
+    }
+
+    function openProviderNoteModal() {
+        document.getElementById('provider-note-modal').classList.remove('hidden');
+    }
+
+    function fillProviderTemplateForm() {
+        const templateKey = document.getElementById('provider-template-select').value;
+        if (!templateKey) return;
+        
+        const data = {
+            patientName: currentPatient.name,
+            mrn: currentPatient.mrn,
+            dob: currentPatient.dob,
+            age: calculateAge(currentPatient.dob),
+            senderName: "Dr. Ange Pompee",
+            senderSpecialty: "Family Medicine",
+            currentDate: new Date().toLocaleDateString()
+        };
+        
+        const filledTemplate = fillProviderTemplate(templateKey, data);
+        document.getElementById('provider-note-message').value = filledTemplate;
+    }
+
+    function sendProviderNote() {
+        const toProvider = document.getElementById('to-provider-select').value;
+        const subject = document.getElementById('provider-note-subject').value;
+        const message = document.getElementById('provider-note-message').value;
+        const urgency = document.querySelector('input[name="urgency"]:checked').value;
+        
+        if (!subject || !message) {
+            showToast('Please fill in subject and message', 'error');
+            return;
+        }
+        
+        const newMessage = createProviderMessage({
+            toProvider: { id: toProvider },
+            patient: { id: currentPatient.id, name: currentPatient.name, mrn: currentPatient.mrn },
+            subject: subject,
+            message: message,
+            urgency: urgency
+        });
+        
+        console.log('Provider note sent:', newMessage);
+        showToast('Provider note sent successfully', 'success');
+        
+        document.getElementById('provider-note-modal').classList.add('hidden');
+        loadProviderNotes();
+    }
+
+    function calculateAge(dob) {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    // Auto-initialize
+    if (document.readyState === 'complete') {
+        window.initGuidedVisit();
+    }
+</script>

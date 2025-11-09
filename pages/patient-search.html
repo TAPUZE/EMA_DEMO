@@ -1,0 +1,293 @@
+<!-- ==================== PATIENT SEARCH PAGE ==================== -->
+
+<div class="p-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Patient Search</h1>
+            <p class="text-gray-600 mt-1">Find and select a patient to view their chart</p>
+        </div>
+        <button id="new-patient-btn" class="btn-primary">
+            <i class="ph ph-plus mr-2"></i>
+            New Patient
+        </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="glass p-4 mb-6">
+        <div class="relative">
+            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
+            <input 
+                type="text" 
+                id="patient-search-input" 
+                placeholder="Search by name, MRN, or date of birth..."
+                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            >
+        </div>
+        
+        <!-- Quick Filters -->
+        <div class="flex gap-2 mt-4">
+            <button class="px-4 py-2 text-sm rounded-lg bg-sky-500 text-white" data-filter="all">All Patients</button>
+            <button class="px-4 py-2 text-sm rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300" data-filter="recent">Recent</button>
+            <button class="px-4 py-2 text-sm rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300" data-filter="alerts">With Alerts</button>
+        </div>
+    </div>
+
+    <!-- Patient List -->
+    <div class="glass overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="data-table w-full">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>MRN</th>
+                        <th>DOB</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Last Visit</th>
+                        <th>Flags</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="patient-list-body">
+                    <!-- Patients will be loaded here -->
+                    <tr>
+                        <td colspan="8" class="text-center py-8 text-gray-500">
+                            <i class="ph ph-magnifying-glass text-4xl mb-2"></i>
+                            <p>Search for a patient to get started</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- New Patient Modal (placeholder for now) -->
+<div id="new-patient-modal" class="hidden">
+    <div class="modal-overlay">
+        <div class="modal-content max-w-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold">New Patient Registration</h2>
+                <button class="close-modal text-gray-500 hover:text-gray-700">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+            </div>
+            <p class="text-gray-600 mb-4">Patient registration form will be implemented here.</p>
+            <div class="flex justify-end gap-2">
+                <button class="btn-secondary close-modal">Cancel</button>
+                <button class="btn-primary">Save Patient</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { patients, searchPatients } from '../data/patients.js';
+    import { showToast } from '../js/ui-components.js';
+    import { calculateAge } from '../js/navigation.js';
+
+    console.log('🔍 Initializing patient search page...');
+    console.log('📊 Loaded patients:', patients);
+    console.log('📊 Patient count:', patients ? patients.length : 0);
+
+    // Initialize page
+    window.initPatientSearch = async function() {
+        console.log('📄 Patient Search page loaded');
+        
+        // Load patients from data manager AND static data
+        const dataManager = await import('../js/data-manager.js').then(m => m.default);
+        const runtimePatients = dataManager.getAllPatients();
+        
+        // Combine runtime (new) with static (demo) patients
+        const allPatients = [...runtimePatients, ...patients];
+        
+        console.log(`👥 Loaded ${allPatients.length} patients (${runtimePatients.length} new + ${patients.length} demo)`);
+        
+        // Store combined list for filtering
+        window.allPatientsList = allPatients;
+        
+        // Load all patients initially
+        displayPatients(allPatients);
+        
+        // Setup search
+        const searchInput = document.getElementById('patient-search-input');
+        searchInput.addEventListener('input', debounce(handleSearch, 300));
+        
+        // Setup filters
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+            btn.addEventListener('click', handleFilterClick);
+        });
+        
+        // Setup new patient button
+        document.getElementById('new-patient-btn').addEventListener('click', () => {
+            showToast('New patient registration coming soon!', 'info');
+        });
+    };
+
+    function handleSearch(e) {
+        const query = e.target.value.trim();
+        const allPatients = window.allPatientsList || patients;
+        
+        if (query.length === 0) {
+            displayPatients(allPatients);
+            return;
+        }
+        
+        // Search in combined patient list
+        const lowerQuery = query.toLowerCase();
+        const results = allPatients.filter(p => 
+            p.name.toLowerCase().includes(lowerQuery) ||
+            p.mrn.toLowerCase().includes(lowerQuery) ||
+            p.dob.includes(lowerQuery)
+        );
+        
+        displayPatients(results);
+        console.log(`🔍 Search for "${query}" found ${results.length} results`);
+    }
+
+    function handleFilterClick(e) {
+        const filter = e.target.dataset.filter;
+        const allPatients = window.allPatientsList || patients;
+        
+        // Update active state
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+            btn.classList.remove('bg-sky-500', 'text-white');
+            btn.classList.add('bg-gray-200', 'text-gray-700');
+        });
+        e.target.classList.remove('bg-gray-200', 'text-gray-700');
+        e.target.classList.add('bg-sky-500', 'text-white');
+        
+        // Apply filter
+        let filtered = allPatients;
+        if (filter === 'recent') {
+            filtered = allPatients.filter(p => {
+                const lastVisit = new Date(p.lastVisit);
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                return lastVisit >= thirtyDaysAgo;
+            });
+        } else if (filter === 'alerts') {
+            filtered = allPatients.filter(p => p.flags && p.flags.length > 0);
+        }
+        
+        displayPatients(filtered);
+        console.log(`🔍 Filter "${filter}" applied, showing ${filtered.length} patients`);
+    }
+
+    function displayPatients(patientList) {
+        const tbody = document.getElementById('patient-list-body');
+        
+        if (patientList.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center py-8 text-gray-500">
+                        <i class="ph ph-users text-4xl mb-2"></i>
+                        <p>No patients found</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = patientList.map(patient => {
+            const age = calculateAge(patient.dob);
+            const flagsHtml = patient.flags && patient.flags.length > 0
+                ? patient.flags.map(flag => `<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">${flag}</span>`).join(' ')
+                : '<span class="text-gray-400">None</span>';
+            
+            return `
+                <tr>
+                    <td class="font-medium">${patient.name}</td>
+                    <td>${patient.mrn}</td>
+                    <td>${formatDate(patient.dob)}</td>
+                    <td>${age}</td>
+                    <td>${patient.gender}</td>
+                    <td>${formatDate(patient.lastVisit)}</td>
+                    <td>${flagsHtml}</td>
+                    <td>
+                        <button 
+                            class="px-3 py-1 text-sm bg-sky-500 text-white rounded hover:bg-sky-600 transition-colors"
+                            onclick="window.selectPatient('${patient.id}')"
+                        >
+                            <i class="ph ph-folder-open mr-1"></i>
+                            Open Chart
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Select patient and update app state
+    window.selectPatient = async function(patientId) {
+        try {
+            const { updatePatientBanner } = await import('../js/navigation.js');
+            const { showToast } = await import('../js/ui-components.js');
+            const dataManager = await import('../js/data-manager.js').then(m => m.default);
+            
+            // Check both runtime and static patients
+            let patient = dataManager.getPatient(patientId);
+            if (!patient) {
+                const { patients } = await import('../data/patients.js');
+                patient = patients.find(p => p.id === patientId);
+            }
+            
+            if (patient) {
+                console.log('🎯 Found patient:', patient.name, 'ID:', patient.id);
+                
+                // Set current patient in app state
+                window.appState.currentPatient = patient;
+                console.log('✅ Set in appState');
+                
+                // Store in localStorage for persistence
+                localStorage.setItem('currentPatient', JSON.stringify(patient));
+                console.log('✅ Saved to localStorage');
+                
+                // Update patient banner
+                updatePatientBanner(patient);
+                console.log('✅ Updated banner');
+                
+                // Show success message
+                showToast(`Selected patient: ${patient.name}`, 'success');
+                
+                // Navigate to patient chart with a small delay to ensure state is set
+                console.log('🔄 Navigating to patient chart in 200ms...');
+                setTimeout(() => {
+                    console.log('📍 Setting hash to patient-chart');
+                    window.location.hash = 'patient-chart';
+                    console.log('✅ Hash set to:', window.location.hash);
+                }, 200);
+            } else {
+                console.error('❌ Patient not found with ID:', patientId);
+                showToast('Patient not found', 'error');
+            }
+        } catch (error) {
+            console.error('Error selecting patient:', error);
+            const { showToast } = await import('../js/ui-components.js');
+            showToast('Error selecting patient', 'error');
+        }
+    };
+
+    // Auto-initialize if page is already loaded
+    if (document.readyState === 'complete') {
+        window.initPatientSearch();
+    }
+</script>

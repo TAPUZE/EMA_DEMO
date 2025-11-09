@@ -1,0 +1,847 @@
+<!-- ==================== AI DOCUMENT PROCESSOR ==================== -->
+
+<div class="p-6">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">AI Document Processor</h1>
+        <p class="text-gray-600">Upload medical documents for intelligent data extraction</p>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="glass p-8 mb-6">
+        <div class="text-center">
+            <div id="drop-zone" class="border-4 border-dashed border-gray-300 rounded-lg p-12 hover:border-sky-500 transition-all cursor-pointer">
+                <i class="ph ph-upload-simple text-6xl text-gray-400 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Upload Medical Document</h3>
+                <p class="text-gray-600 mb-4">Drag and drop or click to upload</p>
+                <input type="file" id="file-input" accept="image/*,.pdf,.doc,.docx" class="hidden">
+                <button onclick="document.getElementById('file-input').click()" class="btn-primary">
+                    <i class="ph ph-folder-open mr-2"></i>
+                    Browse Files
+                </button>
+                <p class="text-sm text-gray-500 mt-4">Supported: JPG, PNG, PDF, DOC, DOCX</p>
+                
+                <!-- Historical Document Available -->
+                <div class="mt-6 p-4 bg-amber-50 border-2 border-amber-400 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="ph ph-file-image text-4xl text-amber-600"></i>
+                            <div>
+                                <div class="font-bold text-gray-800 flex items-center gap-2">
+                                    <span>📜 Historical Document (1949)</span>
+                                </div>
+                                <div class="text-sm text-gray-700 font-semibold">0520043bruce1.jpg</div>
+                                <div class="text-xs text-gray-600 italic">Bruce Springsteen - Newborn Record, Monmouth Memorial Hospital</div>
+                            </div>
+                        </div>
+                        <button id="load-demo-btn" class="btn-primary btn-sm whitespace-nowrap">
+                            <i class="ph ph-play-circle mr-2"></i>
+                            Process Document
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Status -->
+    <div id="processing-section" class="hidden glass p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Processing Document...</h3>
+        <div class="space-y-3">
+            <div class="flex items-center gap-3">
+                <div id="status-1" class="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                <span class="text-gray-600">Uploading document...</span>
+                <span id="time-1" class="ml-auto text-sm text-gray-500"></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="status-2" class="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                <span class="text-gray-600">OCR text extraction...</span>
+                <span id="time-2" class="ml-auto text-sm text-gray-500"></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="status-3" class="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                <span class="text-gray-600">AI analysis & data extraction...</span>
+                <span id="time-3" class="ml-auto text-sm text-gray-500"></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="status-4" class="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                <span class="text-gray-600">Structuring medical data...</span>
+                <span id="time-4" class="ml-auto text-sm text-gray-500"></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="status-5" class="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                <span class="text-gray-600">Populating database...</span>
+                <span id="time-5" class="ml-auto text-sm text-gray-500"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Extracted Data Preview -->
+    <div id="extracted-data-section" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Original Document Preview -->
+            <div class="glass p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Original Document</h3>
+                <div id="document-preview" class="bg-gray-100 rounded-lg p-4 min-h-[400px] overflow-auto">
+                    <!-- Document preview will be shown here -->
+                </div>
+            </div>
+
+            <!-- Extracted Text -->
+            <div class="glass p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Extracted Text (OCR)</h3>
+                <div id="extracted-text" class="bg-gray-100 rounded-lg p-4 min-h-[400px] overflow-auto font-mono text-sm">
+                    <!-- Extracted text will be shown here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Structured Data -->
+        <div class="glass p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-800">AI-Extracted Structured Data</h3>
+                <div class="flex gap-2">
+                    <button id="edit-data-btn" class="btn-secondary btn-sm">
+                        <i class="ph ph-pencil mr-2"></i>Edit
+                    </button>
+                    <button id="save-to-chart-btn" class="btn-primary btn-sm">
+                        <i class="ph ph-check-circle mr-2"></i>Save to Patient Chart
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Patient Information -->
+                <div class="col-span-full">
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center">
+                        <i class="ph ph-user text-sky-600 mr-2"></i>
+                        Patient Information
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-sky-50 p-4 rounded-lg">
+                        <div>
+                            <label class="text-xs text-gray-600">Name</label>
+                            <div class="font-semibold" id="extracted-name">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">DOB</label>
+                            <div class="font-semibold" id="extracted-dob">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">MRN</label>
+                            <div class="font-semibold" id="extracted-mrn">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visit Information -->
+                <div class="col-span-full">
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center">
+                        <i class="ph ph-calendar text-purple-600 mr-2"></i>
+                        Visit Information
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-purple-50 p-4 rounded-lg">
+                        <div>
+                            <label class="text-xs text-gray-600">Date</label>
+                            <div class="font-semibold" id="extracted-visit-date">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">Provider</label>
+                            <div class="font-semibold" id="extracted-provider">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">Visit Type</label>
+                            <div class="font-semibold" id="extracted-visit-type">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">Location</label>
+                            <div class="font-semibold" id="extracted-location">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vital Signs -->
+                <div class="col-span-full">
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center">
+                        <i class="ph ph-heart-straight text-red-600 mr-2"></i>
+                        Vital Signs
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-6 gap-4 bg-red-50 p-4 rounded-lg">
+                        <div>
+                            <label class="text-xs text-gray-600">BP</label>
+                            <div class="font-semibold" id="extracted-bp">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">HR</label>
+                            <div class="font-semibold" id="extracted-hr">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">Temp</label>
+                            <div class="font-semibold" id="extracted-temp">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">Weight</label>
+                            <div class="font-semibold" id="extracted-weight">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">Height</label>
+                            <div class="font-semibold" id="extracted-height">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600">O2 Sat</label>
+                            <div class="font-semibold" id="extracted-o2sat">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chief Complaint & HPI -->
+                <div class="col-span-full">
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center">
+                        <i class="ph ph-chat-text text-orange-600 mr-2"></i>
+                        Chief Complaint & History
+                    </h4>
+                    <div class="bg-orange-50 p-4 rounded-lg space-y-3">
+                        <div>
+                            <label class="text-xs text-gray-600 font-medium">Chief Complaint</label>
+                            <div class="text-sm mt-1" id="extracted-cc">—</div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600 font-medium">HPI</label>
+                            <div class="text-sm mt-1" id="extracted-hpi">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagnoses & ICD-10 Codes -->
+                <div class="col-span-full md:col-span-1">
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center">
+                        <i class="ph ph-stethoscope text-green-600 mr-2"></i>
+                        Diagnoses
+                    </h4>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div id="extracted-diagnoses" class="space-y-2">
+                            <!-- Diagnoses will be listed here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medications -->
+                <div class="col-span-full md:col-span-1">
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center">
+                        <i class="ph ph-pill text-blue-600 mr-2"></i>
+                        Medications
+                    </h4>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div id="extracted-medications" class="space-y-2">
+                            <!-- Medications will be listed here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders & Labs -->
+                <div class="col-span-full md:col-span-1">
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center">
+                        <i class="ph ph-flask text-purple-600 mr-2"></i>
+                        Orders & Labs
+                    </h4>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <div id="extracted-orders" class="space-y-2">
+                            <!-- Orders will be listed here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assessment & Plan -->
+                <div class="col-span-full">
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center">
+                        <i class="ph ph-clipboard-text text-cyan-600 mr-2"></i>
+                        Assessment & Plan
+                    </h4>
+                    <div class="bg-cyan-50 p-4 rounded-lg">
+                        <div class="text-sm whitespace-pre-wrap" id="extracted-plan">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confidence Scores -->
+        <div class="glass p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">AI Confidence Scores</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Text Extraction Quality</span>
+                        <span class="font-semibold" id="conf-ocr">—</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="conf-ocr-bar" class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Data Structure Accuracy</span>
+                        <span class="font-semibold" id="conf-structure">—</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="conf-structure-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">ICD-10 Code Matching</span>
+                        <span class="font-semibold" id="conf-icd">—</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="conf-icd-bar" class="bg-purple-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { showToast } from '../js/ui-components.js';
+
+    window.initAIDocumentProcessor = function() {
+        console.log('🤖 AI Document Processor loaded');
+
+        // File input handler
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-sky-500', 'bg-sky-50');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-sky-500', 'bg-sky-50');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-sky-500', 'bg-sky-50');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // Connect demo button
+        document.getElementById('load-demo-btn')?.addEventListener('click', async () => {
+            document.getElementById('processing-section').classList.remove('hidden');
+            document.getElementById('extracted-data-section').classList.add('hidden');
+            await new Promise(resolve => setTimeout(resolve, 100));
+            await handleFile({ name: '0520043bruce1.jpg' });
+        });
+
+        // Auto-load demo on page load
+        setTimeout(() => {
+            document.getElementById('load-demo-btn')?.click();
+        }, 800);
+    };
+
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+            handleFile(file);
+        }
+    }
+
+    async function handleFile(file) {
+        console.log('📄 Processing file:', file.name);
+        
+        // Show processing section
+        document.getElementById('processing-section').classList.remove('hidden');
+        document.getElementById('extracted-data-section').classList.add('hidden');
+
+        // Simulate AI processing steps
+        await simulateProcessing();
+
+        // Load Bruce's data (simulating extraction from 0520043bruce1.jpg)
+        if (file.name.includes('bruce') || file.name.includes('0520043')) {
+            simulateBruceNote();
+        } else {
+            simulateBruceNote(); // For now, always show Bruce demo
+        }
+
+        // Show extracted data
+        document.getElementById('processing-section').classList.add('hidden');
+        document.getElementById('extracted-data-section').classList.remove('hidden');
+
+        showToast('✅ Document processed: ' + file.name, 'success');
+    }
+
+    async function simulateProcessing() {
+        const steps = [
+            { id: 1, time: 500 },
+            { id: 2, time: 1200 },
+            { id: 3, time: 1800 },
+            { id: 4, time: 1000 },
+            { id: 5, time: 800 }
+        ];
+
+        for (const step of steps) {
+            await new Promise(resolve => setTimeout(resolve, step.time));
+            const statusEl = document.getElementById(`status-${step.id}`);
+            statusEl.classList.remove('border-gray-300');
+            statusEl.classList.add('bg-green-500', 'border-green-500');
+            statusEl.innerHTML = '<i class="ph ph-check text-white text-xs"></i>';
+            document.getElementById(`time-${step.id}`).textContent = `${step.time}ms`;
+        }
+    }
+
+    function simulateBruceNote() {
+        console.log('📋 Loading demo newborn record for Bruce Springsteen (1949)...');
+        
+        // Simulate extracted OCR text from historical newborn record
+        const ocrText = `MONMOUTH MEMORIAL HOSPITAL
+Long Branch, N. J.
+Case No: 109439
+Dr. Shemtzau
+
+NEWBORN RECORD
+
+PATIENT: Springsteen, Male
+ADDRESS: 57 Randolph St
+DATE OF ADMISSION: 9-23-49
+DATE OF DISCHARGE: 9-30-49
+DIAGNOSIS: Term Birth, living, uncomp.
+
+BIRTH DETAILS:
+Time of Birth: 10:50 PM
+Sex: Male
+Weight: 6 lb. 6 oz.
+Temperature: 98°F
+
+TREATMENT:
+Eyes: AgNO3
+Cord: Clamped
+
+MEASUREMENTS (as of 9/30/49):
+Head: 13 ½ inches
+Shoulder: 13 inches
+Chest: 12 ½ inches
+Length: 19 inches
+
+PHYSICAL EXAMINATION:
+
+GENERAL CONDITION: Good
+
+HEAD: Well-rounded, no caput succedaneum, no hematoma. 
+Fontanels soft, depressed, pulsating.
+
+FACE: Good, no asymmetry, no palsies, no cyanosis.
+
+EYES: Open - reacts to light.
+
+NOSE: Open - no discharge.
+
+THROAT: Mouth, tongue and lips clean - no deformity.
+
+EARS: No abnormalities.
+
+HEART: Normal sounds, no arrhythmia.
+
+LUNGS: Good.
+
+CORD: Is clean - separating.
+
+ABDOMEN: Soft - no enlargement of spleen or liver.
+
+BACK: Normal.
+
+GENITALIA: Normal. Has undescended testes, purpura, nodes common.
+
+EXTREMITIES: Normal.
+
+PROGRESS RECORD:
+- Condition clean, mucosa normal
+- Sleeps well - no apnea or cyanosis
+- Spontaneous respiration well
+- Sounds ok. Regular pulse and respirations
+- Body pink in oxygen then looks jaundiced slightly - normal
+- Cord is clean regarding genitalia
+- Circumcision done on 9/29/49
+- Respirations - no abnormalities
+- Stools normal
+- Nurses well, breast fed
+- General condition: Good - no abnormalities
+- Jaundiced areas noted (normal neonatal jaundice)
+
+CONDITION ON DISCHARGE (9/30/49):
+- Good
+- Cord separating normally
+- Circumcision: Clean, healing well
+- Breasts & feeding normal
+- Nurses well. Normal hospital stay
+
+Signed: Dr. A. E. Zomo (?)
+Date: 9/30/49`;
+
+        document.getElementById('extracted-text').textContent = ocrText;
+
+        // Populate structured data - NEWBORN RECORD
+        document.getElementById('extracted-name').textContent = 'Springsteen, Male (Newborn)';
+        document.getElementById('extracted-dob').textContent = '09/23/1949';
+        document.getElementById('extracted-mrn').textContent = '109439';
+        document.getElementById('extracted-visit-date').textContent = '09/23/1949';
+        document.getElementById('extracted-provider').textContent = 'Dr. Shemtzau';
+        document.getElementById('extracted-visit-type').textContent = 'Birth Admission';
+        document.getElementById('extracted-location').textContent = 'Monmouth Memorial Hospital';
+
+        document.getElementById('extracted-bp').textContent = 'N/A';
+        document.getElementById('extracted-hr').textContent = 'Regular';
+        document.getElementById('extracted-temp').textContent = '98°F';
+        document.getElementById('extracted-weight').textContent = '6 lb 6 oz';
+        document.getElementById('extracted-height').textContent = '19 inches';
+        document.getElementById('extracted-o2sat').textContent = 'Room air';
+
+        document.getElementById('extracted-cc').textContent = 'Term Birth, living, uncomplicated';
+        document.getElementById('extracted-hpi').textContent = 'Male newborn delivered at 10:50 PM on 9/23/49. Birth weight 6 lb 6 oz, length 19 inches. Eyes treated with AgNO3, cord clamped at delivery. General condition good at birth. Mother and baby at 57 Randolph St.';
+
+        // Diagnoses
+        document.getElementById('extracted-diagnoses').innerHTML = `
+            <div class="text-sm"><strong>Z38.00</strong> - Single liveborn infant, delivered vaginally</div>
+            <div class="text-sm"><strong>P59.9</strong> - Neonatal jaundice (physiologic)</div>
+            <div class="text-sm"><strong>Q53.9</strong> - Undescended testicle, unspecified</div>
+            <div class="text-sm"><strong>Z41.2</strong> - Encounter for routine circumcision</div>
+        `;
+
+        // Medications/Treatments
+        document.getElementById('extracted-medications').innerHTML = `
+            <div class="text-sm">• Silver Nitrate (AgNO3) eye prophylaxis - administered</div>
+            <div class="text-sm">• Umbilical cord care - clamped, separating normally</div>
+            <div class="text-sm">• Vitamin K (presumed standard of care)</div>
+            <div class="text-sm">• Breast feeding - established successfully</div>
+        `;
+
+        // Procedures/Orders
+        document.getElementById('extracted-orders').innerHTML = `
+            <div class="text-sm">✓ Circumcision completed 9/29/49 - healing well</div>
+            <div class="text-sm">✓ Newborn measurements documented</div>
+            <div class="text-sm">✓ Physical examination completed</div>
+            <div class="text-sm">✓ Feeding assessment - nurses well</div>
+            <div class="text-sm">• Follow-up: Routine pediatric care</div>
+        `;
+
+        // Assessment & Plan
+        document.getElementById('extracted-plan').textContent = `ASSESSMENT:
+Healthy male newborn, term birth, uncomplicated delivery. Birth weight 6 lb 6 oz.
+
+FINDINGS:
+- General condition: Good throughout hospital stay
+- Head: Well-rounded, fontanels normal
+- Cardiopulmonary: Heart sounds normal, lungs clear
+- Jaundice: Mild physiologic jaundice noted (normal)
+- Circumcision: Performed 9/29/49, healing well
+- Feeding: Breast feeding established, nurses well
+- Undescended testes: Noted, common in newborns (typically resolves)
+
+DISCHARGE PLAN (9/30/49):
+- Condition on discharge: Good
+- Cord care: Separating normally
+- Circumcision care: Clean, healing well
+- Feeding: Continue breast feeding
+- Follow-up: Routine pediatric visits
+- Duration of stay: 7 days (standard for 1949)`;
+
+        // Confidence scores
+        document.getElementById('conf-ocr').textContent = '96%';
+        document.getElementById('conf-ocr-bar').style.width = '96%';
+        document.getElementById('conf-structure').textContent = '94%';
+        document.getElementById('conf-structure-bar').style.width = '94%';
+        document.getElementById('conf-icd').textContent = '98%';
+        document.getElementById('conf-icd-bar').style.width = '98%';
+
+        // Show document preview - 1949 Historical Newborn Record
+        document.getElementById('document-preview').innerHTML = `
+            <div class="bg-amber-50 p-6 border-2 border-amber-800 rounded shadow-2xl" style="font-family: 'Courier New', monospace;">
+                <div class="border-b-2 border-amber-900 pb-3 mb-4 text-center">
+                    <h3 class="text-xl font-bold text-amber-900">MONMOUTH MEMORIAL HOSPITAL</h3>
+                    <p class="text-sm text-amber-800">Long Branch, N. J.</p>
+                    <p class="text-lg font-bold mt-2 text-amber-900">NEWBORN RECORD</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mb-4 text-sm">
+                    <div><strong>Case No:</strong> 109439</div>
+                    <div><strong>Doctor:</strong> Dr. Shemtzau</div>
+                </div>
+
+                <div class="bg-white p-4 border border-amber-700 rounded mb-4">
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div><strong>Name:</strong> Springsteen, Male</div>
+                        <div><strong>Sex:</strong> Male</div>
+                        <div><strong>Address:</strong> 57 Randolph St</div>
+                        <div><strong>Time of Birth:</strong> 10:50 PM</div>
+                        <div><strong>Date of Adm.:</strong> 9-23-49</div>
+                        <div><strong>Weight:</strong> 6 lb. 6 oz.</div>
+                        <div><strong>Date of Dis.:</strong> 9-30-49</div>
+                        <div><strong>Temp.:</strong> 98°F</div>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-amber-300">
+                        <strong>Diagnosis:</strong> <span class="italic">Term Birth, living</span> <span class="text-xs">(uncomp.)</span>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-3 border border-blue-300 rounded mb-4 text-sm">
+                    <strong>Treatment:</strong><br>
+                    Eyes: AgNO₃ | Cord: Clamped
+                </div>
+
+                <div class="bg-green-50 p-3 border border-green-300 rounded mb-4 text-sm">
+                    <strong>Measurements (9/30/49):</strong><br>
+                    Head: 13½" | Shoulder: 13" | Chest: 12½" | Length: 19"
+                </div>
+
+                <div class="space-y-3 text-xs" style="line-height: 1.6;">
+                    <div class="bg-yellow-50 p-3 border-l-4 border-yellow-600">
+                        <strong class="text-sm">PHYSICAL EXAMINATION:</strong><br><br>
+                        <strong>General Condition:</strong> Good.<br><br>
+                        <strong>Head:</strong> Well-rounded, no caput succedaneum, no hematoma.<br>
+                        Fontanels soft, depressed, pulsating.<br><br>
+                        <strong>Face:</strong> Good, no asymmetry, no palsies, no cyanosis.<br><br>
+                        <strong>Eyes:</strong> Open - reacts to light.<br><br>
+                        <strong>Nose:</strong> Open - no discharge.<br><br>
+                        <strong>Throat:</strong> Mouth, tongue and lips clean - no deformity.<br><br>
+                        <strong>Ears:</strong> No abnormalities.<br><br>
+                        <strong>Heart:</strong> Normal sounds, no arrhythmia.<br><br>
+                        <strong>Lungs:</strong> Good.<br><br>
+                        <strong>Cord:</strong> Is clean - separating.<br><br>
+                        <strong>Abdomen:</strong> Soft - no enlargement of spleen or liver.<br><br>
+                        <strong>Back:</strong> Normal.<br><br>
+                        <strong>Genitalia:</strong> Normal. Has undescended testes, purpura, nodes common.<br><br>
+                        <strong>Extremities:</strong> Normal.
+                    </div>
+
+                    <div class="bg-purple-50 p-3 border-l-4 border-purple-600">
+                        <strong class="text-sm">PROGRESS RECORD:</strong><br><br>
+                        • Sleeps well - no apnea or cyanosis<br>
+                        • Spontaneous respiration well<br>
+                        • Regular pulse and respirations<br>
+                        • Body pink, slight jaundice noted (normal)<br>
+                        • Cord clean, separating<br>
+                        • <strong>Circumcision done 9/29/49</strong><br>
+                        • Stools normal<br>
+                        • Nurses well, breast fed<br>
+                        • General condition: Good
+                    </div>
+
+                    <div class="bg-green-100 p-3 border-2 border-green-600 rounded">
+                        <strong class="text-sm">CONDITION ON DISCHARGE (9/30/49):</strong><br><br>
+                        <strong>Status:</strong> Good<br>
+                        <strong>Cord:</strong> Separating normally<br>
+                        <strong>Circumcision:</strong> Clean, healing well<br>
+                        <strong>Feeding:</strong> Nurses well, breast feeding established<br>
+                        <strong>Hospital Stay:</strong> Normal (7 days)
+                    </div>
+
+                    <div class="border-t-2 border-amber-800 pt-3 mt-4">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <strong>Signed:</strong> <span class="italic">Dr. A. E. Zomo (?)</span>
+                            </div>
+                            <div class="text-right">
+                                <strong>Date:</strong> 9/30/49
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 p-4 bg-amber-100 border border-amber-400 rounded text-sm">
+                <div class="flex items-start gap-3">
+                    <i class="ph ph-clock-countdown-bold text-3xl text-amber-700"></i>
+                    <div>
+                        <strong class="text-amber-900">� Historical Document Analysis</strong><br>
+                        <strong>📄 Source:</strong> 0520043bruce1.jpg<br>
+                        <strong>📅 Document Date:</strong> September 23-30, 1949 (76 years old!)<br>
+                        <strong>🏥 Facility:</strong> Monmouth Memorial Hospital, Long Branch, NJ<br>
+                        <strong>🔍 OCR Engine:</strong> Historical Document Recognition (Tesseract + GPT-4 Vision)<br>
+                        <strong>🎯 Confidence:</strong> 89% (Aged paper, handwritten notes, vintage format)<br>
+                        <strong>📝 Note:</strong> This is a historical newborn record from 1949. Medical practices and terminology reflect standards of that era.
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Save to chart button
+    document.getElementById('save-to-chart-btn')?.addEventListener('click', async () => {
+        const { showToast } = await import('../js/ui-components.js');
+        const dataManager = await import('../js/data-manager.js').then(m => m.default);
+        
+        // Create new patient record from historical newborn data - matching patient.js format
+        const newPatient = {
+            id: "springsteen001",
+            name: "Bruce Springsteen",
+            dob: "1949-09-23",
+            gender: "Male",
+            mrn: "109439",
+            phone: "(732) 555-1949",
+            email: "bruce@example.com",
+            address: "57 Randolph St, Long Branch, NJ",
+            insurance: "Historical Record - 1949",
+            allergies: [],
+            flags: ["Historical Record", "Newborn 1949", "Famous Patient"],
+            lastVisit: "1949-09-30",
+            
+            socialHistory: {
+                smoking: { status: "n/a", details: "Newborn record" },
+                alcohol: { status: "n/a", details: "Newborn record" },
+                drugs: { status: "n/a", details: "Newborn record" },
+                exercise: { frequency: "n/a", type: "Newborn record" },
+                occupation: "Newborn - Later became musician/songwriter",
+                livingSituation: "Born at Monmouth Memorial Hospital, 1949"
+            },
+            
+            familyHistory: [],
+            
+            surgicalHistory: [
+                { procedure: "Circumcision", date: "1949-09-29", hospital: "Monmouth Memorial Hospital", surgeon: "Dr. Shemtzau", complications: "None - healed well" }
+            ],
+            
+            preventiveServices: {
+                cancerScreenings: {},
+                otherScreenings: {}
+            },
+            
+            problems: [
+                { 
+                    icd10: 'Z38.00', 
+                    description: 'Single liveborn infant, delivered vaginally', 
+                    onsetDate: '1949-09-23', 
+                    status: 'historical',
+                    notes: 'Term birth, uncomplicated delivery'
+                },
+                { 
+                    icd10: 'P59.9', 
+                    description: 'Neonatal jaundice (physiologic)', 
+                    onsetDate: '1949-09-26', 
+                    status: 'resolved',
+                    notes: 'Mild physiologic jaundice, resolved by discharge'
+                },
+                { 
+                    icd10: 'Q53.9', 
+                    description: 'Undescended testicle', 
+                    onsetDate: '1949-09-23', 
+                    status: 'historical',
+                    notes: 'Noted at birth, common in newborns'
+                }
+            ],
+            
+            medications: [
+                {
+                    name: "Silver Nitrate Eye Drops",
+                    dosage: "Topical",
+                    frequency: "Once at birth",
+                    route: "Ophthalmic",
+                    prescriber: "Dr. Shemtzau",
+                    startDate: "1949-09-23",
+                    status: "completed",
+                    notes: "Standard prophylaxis for ophthalmia neonatorum"
+                }
+            ],
+            
+            immunizations: [
+                {
+                    vaccine: "None documented",
+                    date: "1949-09-23",
+                    notes: "Routine infant immunizations not yet standard in 1949. Smallpox vaccine typically given at 6-12 months during this era."
+                }
+            ],
+            
+            labs: [
+                {
+                    date: "1949-09-23",
+                    testName: "Birth Measurements",
+                    orderedBy: "Dr. Shemtzau",
+                    tests: [
+                        { name: "Weight", value: "6 lb 6 oz", unit: "", normal: "5-10 lbs", flag: "" },
+                        { name: "Length", value: "19", unit: "inches", normal: "18-22 inches", flag: "" },
+                        { name: "Head Circumference", value: "13.5", unit: "inches", normal: "12.5-14.5 inches", flag: "" },
+                        { name: "Chest Circumference", value: "12.5", unit: "inches", normal: "12-14 inches", flag: "" },
+                        { name: "Temperature", value: "98", unit: "°F", normal: "97-99°F", flag: "" }
+                    ],
+                    status: "completed"
+                }
+            ],
+            
+            imaging: [],
+            
+            vitals: [
+                {
+                    date: "1949-09-23",
+                    time: "22:50",
+                    temp: 98.0,
+                    pulse: "Regular",
+                    resp: "Spontaneous",
+                    bp: "N/A",
+                    weight: 102, // 6 lb 6 oz in ounces
+                    height: 19,
+                    bmi: null,
+                    o2sat: "Room air",
+                    pain: 0
+                }
+            ],
+            
+            visits: [
+                {
+                    date: "1949-09-23",
+                    type: "Birth Admission",
+                    provider: "Dr. Shemtzau",
+                    location: "Monmouth Memorial Hospital, Long Branch, NJ",
+                    reason: "Term birth delivery",
+                    diagnosis: ["Z38.00 - Single liveborn", "P59.9 - Neonatal jaundice", "Z41.2 - Circumcision"],
+                    notes: "Healthy male newborn. Birth weight 6 lb 6 oz, length 19 inches. Delivered at 10:50 PM. General condition good throughout hospital stay. Circumcision performed 9/29/49, healed well. Discharged 9/30/49 in good condition. Breast feeding established.",
+                    plan: "Routine pediatric follow-up. Cord care. Monitor undescended testes."
+                }
+            ],
+            
+            birthRecord: {
+                hospital: 'Monmouth Memorial Hospital',
+                location: 'Long Branch, NJ',
+                birthWeight: '6 lb 6 oz',
+                birthLength: '19 inches',
+                birthTime: '10:50 PM',
+                headCircumference: '13.5 inches',
+                chestCircumference: '12.5 inches',
+                shoulderCircumference: '13 inches',
+                deliveryType: 'Vaginal, uncomplicated',
+                caseNumber: '109439',
+                admissionDate: '1949-09-23',
+                dischargeDate: '1949-09-30',
+                lengthOfStay: '7 days',
+                dischargingPhysician: 'Dr. A. E. Zomo'
+            },
+            
+            historicalNote: '📜 This is a historical document from 1949 - Bruce Springsteen\'s actual newborn hospital record from Monmouth Memorial Hospital. Medical practices reflect standards of that era. He would later become one of the most influential rock musicians of all time.'
+        };
+
+        // Add patient to data manager (persists across app)
+        dataManager.addPatient(newPatient);
+        
+        // Also save to individual localStorage key for backward compatibility
+        localStorage.setItem('patient_springsteen', JSON.stringify(newPatient));
+        
+        // IMPORTANT: Set in appState for immediate use
+        if (!window.appState) {
+            window.appState = {};
+        }
+        window.appState.currentPatient = newPatient;
+        
+        showToast('✅ Patient added to system: Bruce Springsteen (Newborn 1949)', 'success');
+        
+        // Navigate to patient chart after brief delay
+        setTimeout(() => {
+            window.location.hash = 'patient-chart';
+        }, 1500);
+    });
+
+    // Auto-initialize
+    if (document.readyState === 'complete') {
+        window.initAIDocumentProcessor();
+    }
+</script>

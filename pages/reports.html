@@ -1,0 +1,729 @@
+<!-- ==================== REPORTS & ANALYTICS PAGE ==================== -->
+
+<div class="p-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+                <span id="reports-title">Reports & Analytics</span>
+            </h1>
+            <p class="text-gray-600 mt-1" id="reports-subtitle">Practice metrics and patient statistics</p>
+        </div>
+        <div class="flex gap-2">
+            <button id="export-report-btn" class="btn-secondary">
+                <i class="ph ph-download-simple mr-2"></i>
+                Export Report
+            </button>
+            <button id="print-report-btn" class="btn-primary">
+                <i class="ph ph-printer mr-2"></i>
+                Print
+            </button>
+        </div>
+    </div>
+
+    <!-- Date Range Selector -->
+    <div class="glass p-4 mb-6">
+        <div class="flex items-center gap-4">
+            <label class="text-sm font-medium text-gray-700">Report Period:</label>
+            <select id="report-period" class="px-3 py-2 border border-gray-300 rounded-lg">
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month" selected>This Month</option>
+                <option value="quarter">This Quarter</option>
+                <option value="year">This Year</option>
+                <option value="custom">Custom Range</option>
+            </select>
+            <div id="custom-range" class="hidden flex gap-2">
+                <input type="date" id="start-date" class="px-3 py-2 border border-gray-300 rounded-lg">
+                <span class="flex items-center">to</span>
+                <input type="date" id="end-date" class="px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+            <button id="apply-range" class="btn-primary ml-auto">
+                <i class="ph ph-magnifying-glass mr-2"></i>
+                Generate Report
+            </button>
+        </div>
+    </div>
+
+    <!-- ADMIN-ONLY: System Performance Metrics -->
+    <div id="admin-reports" class="hidden">
+        <!-- System Overview -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-shield-check mr-2 text-blue-600"></i>
+                System Performance Overview
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Total Users</div>
+                    <div class="text-3xl font-bold text-blue-600">15</div>
+                    <div class="text-xs text-gray-500 mt-1">5 Providers, 10 Staff</div>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Active Patients</div>
+                    <div class="text-3xl font-bold text-green-600">3,247</div>
+                    <div class="text-xs text-gray-500 mt-1">+42 this month</div>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Total Visits</div>
+                    <div class="text-3xl font-bold text-purple-600">1,284</div>
+                    <div class="text-xs text-gray-500 mt-1">This month</div>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">System Uptime</div>
+                    <div class="text-3xl font-bold text-orange-600">99.8%</div>
+                    <div class="text-xs text-gray-500 mt-1">Last 30 days</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Provider Performance -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-users-three mr-2 text-purple-600"></i>
+                Provider Performance Comparison
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Provider</th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Patients</th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Visits/Month</th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Avg Visit Time</th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Quality Score</th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Patient Satisfaction</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm font-medium text-gray-800">Dr. Ange Pompee</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">847</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">324</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">28 min</td>
+                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">96%</span></td>
+                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">4.8/5</span></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm font-medium text-gray-800">Dr. Sarah Chen</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">692</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">287</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">32 min</td>
+                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">94%</span></td>
+                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">4.9/5</span></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm font-medium text-gray-800">Dr. Marcus Johnson</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">564</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">198</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-600">35 min</td>
+                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">89%</span></td>
+                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">4.7/5</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Revenue & Billing -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-currency-dollar mr-2 text-green-600"></i>
+                Revenue & Billing Analytics
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Total Revenue (MTD)</div>
+                    <div class="text-3xl font-bold text-green-600">$284,340</div>
+                    <div class="text-xs text-green-600 mt-1">↑ 12% vs last month</div>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Outstanding Claims</div>
+                    <div class="text-3xl font-bold text-blue-600">$48,920</div>
+                    <div class="text-xs text-gray-500 mt-1">87 pending claims</div>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Collection Rate</div>
+                    <div class="text-3xl font-bold text-purple-600">94.2%</div>
+                    <div class="text-xs text-green-600 mt-1">↑ 2.1% improvement</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROVIDER-ONLY: Clinical Quality Measures -->
+    <div id="provider-reports" class="hidden">
+    <!-- HEDIS Quality Measures -->
+    <div class="glass p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+            <i class="ph ph-medal mr-2 text-yellow-500"></i>
+            HEDIS Quality Measures
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Diabetes Eye Exam -->
+            <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium text-gray-700">Diabetic Eye Exam</div>
+                    <span class="text-2xl font-bold text-green-600">92%</span>
+                </div>
+                <div class="w-full bg-white rounded-full h-2 mb-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 92%"></div>
+                </div>
+                <div class="text-xs text-gray-600">11/12 patients current (Goal: 90%)</div>
+            </div>
+
+            <!-- Breast Cancer Screening -->
+            <div class="p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium text-gray-700">Breast Cancer Screening</div>
+                    <span class="text-2xl font-bold text-yellow-600">78%</span>
+                </div>
+                <div class="w-full bg-white rounded-full h-2 mb-2">
+                    <div class="bg-yellow-600 h-2 rounded-full" style="width: 78%"></div>
+                </div>
+                <div class="text-xs text-gray-600">7/9 eligible current (Goal: 85%)</div>
+            </div>
+
+            <!-- Colorectal Cancer Screening -->
+            <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium text-gray-700">Colorectal Screening</div>
+                    <span class="text-2xl font-bold text-green-600">88%</span>
+                </div>
+                <div class="w-full bg-white rounded-full h-2 mb-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 88%"></div>
+                </div>
+                <div class="text-xs text-gray-600">22/25 eligible current (Goal: 85%)</div>
+            </div>
+
+            <!-- Blood Pressure Control -->
+            <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium text-gray-700">BP Control (<140/90)</div>
+                    <span class="text-2xl font-bold text-green-600">84%</span>
+                </div>
+                <div class="w-full bg-white rounded-full h-2 mb-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 84%"></div>
+                </div>
+                <div class="text-xs text-gray-600">26/31 HTN patients controlled (Goal: 80%)</div>
+            </div>
+
+            <!-- HbA1c Control -->
+            <div class="p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium text-gray-700">HbA1c Control (<8%)</div>
+                    <span class="text-2xl font-bold text-yellow-600">75%</span>
+                </div>
+                <div class="w-full bg-white rounded-full h-2 mb-2">
+                    <div class="bg-yellow-600 h-2 rounded-full" style="width: 75%"></div>
+                </div>
+                <div class="text-xs text-gray-600">9/12 diabetics controlled (Goal: 80%)</div>
+            </div>
+
+            <!-- Statin Therapy -->
+            <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium text-gray-700">Statin Therapy (CVD)</div>
+                    <span class="text-2xl font-bold text-green-600">95%</span>
+                </div>
+                <div class="w-full bg-white rounded-full h-2 mb-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 95%"></div>
+                </div>
+                <div class="text-xs text-gray-600">19/20 CVD patients on statin (Goal: 90%)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RAF Score & Revenue Impact -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- RAF Score Summary -->
+        <div class="glass p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-chart-line mr-2 text-sky-500"></i>
+                Risk Adjustment Factor (RAF) Summary
+            </h3>
+            <div class="space-y-4">
+                <div class="p-4 bg-sky-50 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Average Panel RAF Score</div>
+                    <div class="text-3xl font-bold text-sky-600">1.847</div>
+                    <div class="text-xs text-green-600 mt-1">
+                        <i class="ph ph-arrow-up mr-1"></i>
+                        +0.124 from last quarter
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-3 bg-gray-50 rounded-lg">
+                        <div class="text-xs text-gray-600 mb-1">Patients Documented</div>
+                        <div class="text-2xl font-bold text-gray-800">87</div>
+                        <div class="text-xs text-gray-600">of 127 total (69%)</div>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-lg">
+                        <div class="text-xs text-gray-600 mb-1">HCCs Captured</div>
+                        <div class="text-2xl font-bold text-gray-800">248</div>
+                        <div class="text-xs text-green-600">+42 this quarter</div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="text-sm font-medium text-gray-700 mb-2">Top HCC Categories</div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600">HCC 18 - Diabetes</span>
+                            <span class="font-medium">34 patients</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600">HCC 85 - CHF</span>
+                            <span class="font-medium">18 patients</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600">HCC 137 - CKD Stage 3-4</span>
+                            <span class="font-medium">12 patients</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Impact -->
+        <div class="glass p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-currency-dollar mr-2 text-green-500"></i>
+                Revenue Impact
+            </h3>
+            <div class="space-y-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Estimated Annual Revenue Impact</div>
+                    <div class="text-3xl font-bold text-green-600">$487,200</div>
+                    <div class="text-xs text-gray-600 mt-1">From RAF score improvement</div>
+                </div>
+
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <div class="text-sm text-gray-600 mb-1">Quality Bonus Potential</div>
+                    <div class="text-3xl font-bold text-purple-600">$64,500</div>
+                    <div class="text-xs text-gray-600 mt-1">Based on HEDIS performance</div>
+                </div>
+
+                <div class="p-4 bg-sky-50 rounded-lg">
+                    <div class="text-sm font-medium text-gray-700 mb-2">Gap Closure Opportunities</div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Overdue Mammograms</span>
+                            <span class="font-medium text-red-600">2 patients ($1,800)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Missing HbA1c Tests</span>
+                            <span class="font-medium text-red-600">3 patients ($2,400)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Incomplete AWVs</span>
+                            <span class="font-medium text-yellow-600">5 patients ($4,500)</span>
+                        </div>
+                        <div class="flex justify-between pt-2 border-t border-gray-200">
+                            <span class="font-medium text-gray-700">Total Opportunity</span>
+                            <span class="font-bold text-green-600">$8,700</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Annual Wellness Visits -->
+    <div class="glass p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+            <i class="ph ph-clipboard-text mr-2 text-purple-500"></i>
+            Annual Wellness Visit (AWV) Completion
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+                <div class="text-sm text-gray-600 mb-2">AWV Completion Rate</div>
+                <div class="text-5xl font-bold text-purple-600 mb-2">73%</div>
+                <div class="text-sm text-gray-600">68 of 93 eligible Medicare patients</div>
+            </div>
+            
+            <div class="text-center p-6 bg-gradient-to-br from-sky-50 to-sky-100 rounded-lg">
+                <div class="text-sm text-gray-600 mb-2">Completed This Quarter</div>
+                <div class="text-5xl font-bold text-sky-600 mb-2">24</div>
+                <div class="text-sm text-green-600">
+                    <i class="ph ph-arrow-up mr-1"></i>
+                    +8 from last quarter
+                </div>
+            </div>
+            
+            <div class="text-center p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg">
+                <div class="text-sm text-gray-600 mb-2">Due This Quarter</div>
+                <div class="text-5xl font-bold text-yellow-600 mb-2">25</div>
+                <div class="text-sm text-gray-600">Schedule now to avoid gaps</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="glass p-6">
+            <div class="flex items-center justify-between mb-2">
+                <div class="text-gray-600 text-sm font-medium">Total Visits</div>
+                <i class="ph ph-users text-2xl text-sky-500"></i>
+            </div>
+            <div class="text-3xl font-bold text-gray-800">127</div>
+            <div class="text-sm text-green-600 mt-2">
+                <i class="ph ph-arrow-up mr-1"></i>
+                12% from last month
+            </div>
+        </div>
+
+        <div class="glass p-6">
+            <div class="flex items-center justify-between mb-2">
+                <div class="text-gray-600 text-sm font-medium">New Patients</div>
+                <i class="ph ph-user-plus text-2xl text-green-500"></i>
+            </div>
+            <div class="text-3xl font-bold text-gray-800">18</div>
+            <div class="text-sm text-green-600 mt-2">
+                <i class="ph ph-arrow-up mr-1"></i>
+                8% from last month
+            </div>
+        </div>
+
+        <div class="glass p-6">
+            <div class="flex items-center justify-between mb-2">
+                <div class="text-gray-600 text-sm font-medium">Avg Wait Time</div>
+                <i class="ph ph-clock text-2xl text-yellow-500"></i>
+            </div>
+            <div class="text-3xl font-bold text-gray-800">14 min</div>
+            <div class="text-sm text-green-600 mt-2">
+                <i class="ph ph-arrow-down mr-1"></i>
+                3 min improvement
+            </div>
+        </div>
+
+        <div class="glass p-6">
+            <div class="flex items-center justify-between mb-2">
+                <div class="text-gray-600 text-sm font-medium">Patient Satisfaction</div>
+                <i class="ph ph-smiley text-2xl text-purple-500"></i>
+            </div>
+            <div class="text-3xl font-bold text-gray-800">4.8</div>
+            <div class="text-sm text-gray-600 mt-2">out of 5.0</div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Visit Types Chart -->
+        <div class="glass p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Visits by Type</h3>
+            <div class="space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm text-gray-600">Follow-up</span>
+                        <span class="text-sm font-medium">52 (41%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-sky-500 h-2 rounded-full" style="width: 41%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm text-gray-600">Annual Physical</span>
+                        <span class="text-sm font-medium">38 (30%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 30%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm text-gray-600">Sick Visit</span>
+                        <span class="text-sm font-medium">25 (20%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 20%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm text-gray-600">New Patient</span>
+                        <span class="text-sm font-medium">12 (9%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full" style="width: 9%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Diagnoses -->
+        <div class="glass p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Top Diagnoses (This Month)</h3>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
+                    <div>
+                        <div class="font-mono font-bold text-sky-700 text-sm">E11.65</div>
+                        <div class="text-xs text-gray-600">Type 2 Diabetes</div>
+                    </div>
+                    <div class="text-2xl font-bold text-sky-600">34</div>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
+                    <div>
+                        <div class="font-mono font-bold text-sky-700 text-sm">I10</div>
+                        <div class="text-xs text-gray-600">Hypertension</div>
+                    </div>
+                    <div class="text-2xl font-bold text-sky-600">28</div>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
+                    <div>
+                        <div class="font-mono font-bold text-sky-700 text-sm">E78.5</div>
+                        <div class="text-xs text-gray-600">Hyperlipidemia</div>
+                    </div>
+                    <div class="text-2xl font-bold text-sky-600">22</div>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
+                    <div>
+                        <div class="font-mono font-bold text-sky-700 text-sm">J44.1</div>
+                        <div class="text-xs text-gray-600">COPD</div>
+                    </div>
+                    <div class="text-2xl font-bold text-sky-600">15</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demographics -->
+    <div class="glass p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Patient Demographics</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Age Groups -->
+            <div>
+                <h4 class="text-sm font-medium text-gray-700 mb-3">Age Distribution</h4>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                        <span>18-30</span>
+                        <span class="font-medium">12%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span>31-50</span>
+                        <span class="font-medium">28%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span>51-65</span>
+                        <span class="font-medium">35%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span>65+</span>
+                        <span class="font-medium">25%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div>
+                <h4 class="text-sm font-medium text-gray-700 mb-3">Gender</h4>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                        <span>Female</span>
+                        <span class="font-medium">58%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span>Male</span>
+                        <span class="font-medium">41%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span>Non-binary</span>
+                        <span class="font-medium">1%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insurance -->
+            <div>
+                <h4 class="text-sm font-medium text-gray-700 mb-3">Insurance Type</h4>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                        <span>Medicare</span>
+                        <span class="font-medium">42%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span>Private</span>
+                        <span class="font-medium">38%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span>Medicaid</span>
+                        <span class="font-medium">15%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span>Self-Pay</span>
+                        <span class="font-medium">5%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HCC Report -->
+    <div class="glass p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">HCC Capture Report</h3>
+        <div class="overflow-x-auto">
+            <table class="data-table w-full">
+                <thead>
+                    <tr>
+                        <th>HCC Code</th>
+                        <th>Description</th>
+                        <th>Patients</th>
+                        <th>Documented This Period</th>
+                        <th>Capture Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-mono font-bold">HCC 19</td>
+                        <td>Diabetes w/ Complications</td>
+                        <td>45</td>
+                        <td>42</td>
+                        <td><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 font-medium">93%</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono font-bold">HCC 85</td>
+                        <td>Congestive Heart Failure</td>
+                        <td>28</td>
+                        <td>26</td>
+                        <td><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 font-medium">93%</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono font-bold">HCC 108</td>
+                        <td>Vascular Disease</td>
+                        <td>32</td>
+                        <td>28</td>
+                        <td><span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 font-medium">88%</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono font-bold">HCC 111</td>
+                        <td>COPD</td>
+                        <td>24</td>
+                        <td>20</td>
+                        <td><span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 font-medium">83%</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono font-bold">HCC 137</td>
+                        <td>CKD Stage 3</td>
+                        <td>18</td>
+                        <td>14</td>
+                        <td><span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 font-medium">78%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 p-4 bg-sky-50 rounded-lg">
+            <div class="flex items-start gap-3">
+                <i class="ph ph-info text-sky-600 text-xl mt-0.5"></i>
+                <div class="text-sm text-gray-700">
+                    <strong>HCC Capture Optimization:</strong> Focus on documenting CKD Stage 3 (HCC 137) diagnoses 
+                    to improve capture rate. Consider scheduling annual wellness visits for patients with chronic conditions.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="glass p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Recent Activity Log</h3>
+        <div class="space-y-3">
+            <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <i class="ph ph-note-pencil text-sky-500 text-2xl"></i>
+                <div class="flex-1">
+                    <div class="font-medium text-gray-800">Visit note signed</div>
+                    <div class="text-sm text-gray-600">Jane Doe - Follow-up visit</div>
+                </div>
+                <div class="text-sm text-gray-500">2 hours ago</div>
+            </div>
+            <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <i class="ph ph-prescription text-green-500 text-2xl"></i>
+                <div class="flex-1">
+                    <div class="font-medium text-gray-800">Prescription sent</div>
+                    <div class="text-sm text-gray-600">John Smith - Furosemide 40mg</div>
+                </div>
+                <div class="text-sm text-gray-500">4 hours ago</div>
+            </div>
+            <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <i class="ph ph-calendar-check text-purple-500 text-2xl"></i>
+                <div class="flex-1">
+                    <div class="font-medium text-gray-800">Appointment scheduled</div>
+                    <div class="text-sm text-gray-600">Alice Johnson - Prosthetic fitting</div>
+                </div>
+                <div class="text-sm text-gray-500">6 hours ago</div>
+            </div>
+        </div>
+    </div>
+    </div> <!-- Close provider-reports div -->
+</div>
+
+<script type="module">
+    import { showToast } from '../js/ui-components.js';
+
+    console.log('📊 Initializing reports page...');
+
+    window.initReports = function() {
+        console.log('📄 Reports page loaded');
+        
+        // Check user role and customize content
+        const user = window.appState?.user;
+        const userRole = user?.role || 'provider';
+        
+        console.log('👤 User role:', userRole);
+        
+        // Show/hide sections based on role
+        const adminReports = document.getElementById('admin-reports');
+        const providerReports = document.getElementById('provider-reports');
+        
+        if (userRole === 'admin') {
+            // Admin sees system-wide reports
+            document.getElementById('reports-title').textContent = 'Administrative Reports & Analytics';
+            document.getElementById('reports-subtitle').textContent = 'System-wide metrics, user performance, and operational insights';
+            adminReports.classList.remove('hidden');
+            providerReports.classList.add('hidden');
+            console.log('👑 Showing admin reports');
+        } else {
+            // Provider sees clinical reports
+            document.getElementById('reports-title').textContent = 'Clinical Reports & Analytics';
+            document.getElementById('reports-subtitle').textContent = 'Your practice metrics and patient statistics';
+            adminReports.classList.add('hidden');
+            providerReports.classList.remove('hidden');
+            console.log('🩺 Showing provider reports');
+        }
+        
+        // Setup period selector
+        document.getElementById('report-period').addEventListener('change', (e) => {
+            const customRange = document.getElementById('custom-range');
+            if (e.target.value === 'custom') {
+                customRange.classList.remove('hidden');
+            } else {
+                customRange.classList.add('hidden');
+            }
+        });
+        
+        // Setup generate report button
+        document.getElementById('apply-range').addEventListener('click', () => {
+            const period = document.getElementById('report-period').value;
+            console.log('📊 Generating report for period:', period);
+            showToast(`${userRole === 'admin' ? 'Administrative' : 'Clinical'} report generated!`, 'success');
+        });
+        
+        // Setup export button
+        document.getElementById('export-report-btn').addEventListener('click', () => {
+            console.log('💾 Exporting report...');
+            showToast('Exporting report as PDF...', 'info');
+            setTimeout(() => {
+                showToast('✅ Report exported successfully!', 'success');
+            }, 1500);
+        });
+        
+        // Setup print button
+        document.getElementById('print-report-btn').addEventListener('click', () => {
+            window.print();
+        });
+    };
+
+    // Auto-initialize
+    if (document.readyState === 'complete') {
+        window.initReports();
+    }
+</script>

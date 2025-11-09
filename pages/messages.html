@@ -1,0 +1,547 @@
+<!-- ==================== MESSAGES PAGE ==================== -->
+
+<div class="p-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Messages</h1>
+            <p class="text-gray-600 mt-1">Secure messaging with patients and staff</p>
+        </div>
+        <button id="compose-message-btn" class="btn-primary">
+            <i class="ph ph-pencil-simple mr-2"></i>
+            Compose Message
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Message Folders -->
+        <div class="glass p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Folders</h3>
+            <div class="space-y-2">
+                <button class="folder-btn active" data-folder="inbox">
+                    <i class="ph ph-tray mr-2"></i>
+                    <span>Inbox</span>
+                    <span class="ml-auto badge">3</span>
+                </button>
+                <button class="folder-btn" data-folder="sent">
+                    <i class="ph ph-paper-plane-tilt mr-2"></i>
+                    <span>Sent</span>
+                </button>
+                <button class="folder-btn" data-folder="archived">
+                    <i class="ph ph-archive mr-2"></i>
+                    <span>Archived</span>
+                </button>
+                <button class="folder-btn" data-folder="urgent">
+                    <i class="ph ph-warning-circle mr-2"></i>
+                    <span>Urgent</span>
+                    <span class="ml-auto badge badge-red">1</span>
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="mt-6">
+                <h4 class="text-sm font-bold text-gray-700 mb-3">Filter by Type</h4>
+                <div class="space-y-1">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="filter-checkbox" data-filter="patient" checked>
+                        Patient Messages
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="filter-checkbox" data-filter="staff" checked>
+                        Staff Messages
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="filter-checkbox" data-filter="lab" checked>
+                        Lab Results
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message List -->
+        <div class="lg:col-span-2">
+            <div class="glass p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-800" id="folder-title">Inbox</h3>
+                    <div class="flex gap-2">
+                        <button class="text-sm px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg">
+                            <i class="ph ph-funnel mr-1"></i>Filter
+                        </button>
+                        <button class="text-sm px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg">
+                            <i class="ph ph-arrow-clockwise mr-1"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Message List -->
+                <div id="message-list" class="space-y-2">
+                    <!-- Messages will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div id="message-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h3 class="text-xl font-bold text-gray-800" id="modal-subject"></h3>
+                            <span id="modal-priority-badge"></span>
+                        </div>
+                        <div class="flex items-center gap-4 text-sm text-gray-600">
+                            <span><strong>From:</strong> <span id="modal-from"></span></span>
+                            <span><strong>Date:</strong> <span id="modal-date"></span></span>
+                        </div>
+                    </div>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="ph ph-x text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto" style="max-height: 60vh;">
+                <div id="modal-body" class="prose max-w-none"></div>
+            </div>
+            <div class="p-6 border-t border-gray-200 flex gap-2">
+                <button class="btn-primary">
+                    <i class="ph ph-arrow-u-up-left mr-2"></i>Reply
+                </button>
+                <button class="btn-secondary">
+                    <i class="ph ph-archive mr-2"></i>Archive
+                </button>
+                <button class="btn-secondary ml-auto">
+                    <i class="ph ph-trash mr-2"></i>Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compose Message Modal -->
+    <div id="compose-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">Compose Message</h3>
+                    <button id="close-compose" class="text-gray-500 hover:text-gray-700">
+                        <i class="ph ph-x text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="compose-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">To</label>
+                    <select id="compose-to" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                        <option value="">Select recipient...</option>
+                        <option value="patient:001">John Smith (Patient)</option>
+                        <option value="patient:002">Jane Doe (Patient)</option>
+                        <option value="patient:003">Alice Johnson (Patient)</option>
+                        <option value="staff:dr.chen">Dr. Sarah Chen (Cardiology)</option>
+                        <option value="staff:dr.torres">Dr. Michael Torres (Vascular)</option>
+                        <option value="staff:nurse.smith">Nurse Jennifer Smith</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                    <input type="text" id="compose-subject" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Enter subject" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="priority" value="normal" checked>
+                            <span>Normal</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="priority" value="urgent">
+                            <span class="text-red-600 font-medium">Urgent</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <textarea id="compose-message" rows="8" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Type your message here..." required></textarea>
+                </div>
+                <div class="flex gap-2 pt-4">
+                    <button type="submit" class="btn-primary flex-1">
+                        <i class="ph ph-paper-plane-tilt mr-2"></i>Send Message
+                    </button>
+                    <button type="button" id="cancel-compose" class="btn-secondary flex-1">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.folder-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 500;
+    color: #6b7280;
+    background: transparent;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.folder-btn:hover {
+    background: #f0f9ff;
+    color: #0ea5e9;
+}
+
+.folder-btn.active {
+    background: #dbeafe;
+    color: #0369a1;
+    font-weight: 600;
+}
+
+.badge {
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #0ea5e9;
+    color: white;
+    border-radius: 9999px;
+}
+
+.badge-red {
+    background: #ef4444;
+}
+
+.message-item {
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.message-item:hover {
+    background: #f0f9ff;
+    border-color: #0ea5e9;
+}
+
+.message-item.unread {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.message-item.unread .message-subject {
+    font-weight: 700;
+}
+</style>
+
+<script type="module">
+    import { showToast } from '../js/ui-components.js';
+    import { getAllMessages, getUnreadMessages } from '../data/alerts-messages.js';
+
+    console.log('💬 Initializing messages page...');
+
+    // Messages data - will be loaded from data file
+    const messages = {
+        inbox: [
+            {
+                id: 1,
+                from: 'Jane Doe',
+                subject: 'Question about medication',
+                preview: 'Should I take my metformin with food? I forgot to ask during my last visit...',
+                body: 'Hi Dr. Pompee,\n\nShould I take my metformin with food? I forgot to ask during my last visit. Also, I\'ve been experiencing some mild stomach upset. Is this normal?\n\nThank you,\nJane',
+                date: '2025-11-08T10:30:00',
+                read: false,
+                type: 'patient',
+                priority: 'normal'
+            },
+            {
+                id: 2,
+                from: 'John Smith',
+                subject: 'Breathing better',
+                preview: 'My breathing has improved since medication adjustment. Thank you for the help...',
+                body: 'Dr. Pompee,\n\nI wanted to let you know that my breathing has improved significantly since you adjusted my medication. I\'m able to walk around the house without getting winded now.\n\nBest regards,\nJohn',
+                date: '2025-11-07T14:15:00',
+                read: false,
+                type: 'patient',
+                priority: 'normal'
+            },
+            {
+                id: 3,
+                from: 'Alice Johnson',
+                subject: 'Phantom pain question',
+                preview: 'The phantom pain is much better with the new medication. Thank you!',
+                body: 'Dear Dr. Pompee,\n\nThe phantom pain is much better with the new medication (Gabapentin). I can finally get some restful sleep at night. My physical therapy is going well too.\n\nThank you so much,\nAlice',
+                date: '2025-11-06T16:45:00',
+                read: false,
+                type: 'patient',
+                priority: 'normal'
+            },
+            {
+                id: 4,
+                from: 'Lab Department',
+                subject: 'URGENT: Abnormal Lab - Jane Doe',
+                preview: 'Patient Jane Doe has abnormal lab results requiring immediate attention...',
+                body: 'URGENT ALERT\n\nPatient: Jane Doe (MRN001)\nTest Date: 2025-11-05\n\nAbnormal Results:\n- HbA1c: 7.2% (HIGH)\n- Creatinine: 1.4 mg/dL (HIGH)\n- eGFR: 48 mL/min (LOW)\n\nPlease review and follow up with patient.',
+                date: '2025-11-05T08:00:00',
+                read: true,
+                type: 'lab',
+                priority: 'urgent'
+            }
+        ],
+        sent: [
+            {
+                id: 5,
+                from: 'ARNP Ange Pompee',
+                to: 'Jane Doe',
+                subject: 'Re: Lab Results',
+                body: 'Jane,\n\nYour recent A1C shows improvement from 8.1% to 7.2%. This is great progress! Keep up the good work with your diet and medications.\n\nBest,\nDr. Pompee',
+                date: '2025-11-05T10:00:00',
+                read: true,
+                type: 'patient'
+            },
+            {
+                id: 6,
+                from: 'ARNP Ange Pompee',
+                to: 'John Smith',
+                subject: 'Follow-up Instructions',
+                body: 'John,\n\nRemember to weigh yourself daily and call if your weight increases by more than 3 pounds. Continue taking your medications as prescribed.\n\nDr. Pompee',
+                date: '2025-10-30T15:30:00',
+                read: true,
+                type: 'patient'
+            }
+        ],
+        archived: [],
+        urgent: [
+            {
+                id: 4,
+                from: 'Lab Department',
+                subject: 'URGENT: Abnormal Lab - Jane Doe',
+                preview: 'Patient Jane Doe has abnormal lab results requiring immediate attention...',
+                body: 'URGENT ALERT\n\nPatient: Jane Doe (MRN001)\nTest Date: 2025-11-05\n\nAbnormal Results:\n- HbA1c: 7.2% (HIGH)\n- Creatinine: 1.4 mg/dL (HIGH)\n- eGFR: 48 mL/min (LOW)\n\nPlease review and follow up with patient.',
+                date: '2025-11-05T08:00:00',
+                read: true,
+                type: 'lab',
+                priority: 'urgent'
+            }
+        ]
+    };
+
+    let currentFolder = 'inbox';
+
+    window.initMessages = async function() {
+        console.log('📄 Messages page loaded');
+        
+        // Load messages from data manager AND static data
+        const dataManager = await import('../js/data-manager.js').then(m => m.default);
+        const runtimeMessages = dataManager.getAllMessages();
+        const staticMessages = getAllMessages();
+        
+        // Combine runtime (new) with static (demo) messages
+        const allMessages = [...runtimeMessages, ...staticMessages];
+        
+        // Organize into folders
+        messages.inbox = allMessages.filter(m => m.type !== 'sent' && !m.archived);
+        messages.sent = allMessages.filter(m => m.type === 'sent');
+        messages.archived = allMessages.filter(m => m.archived === true);
+        messages.urgent = allMessages.filter(m => m.priority === 'urgent' || m.priority === 'high');
+        
+        console.log(`💬 Loaded ${allMessages.length} messages (${runtimeMessages.length} new + ${staticMessages.length} demo)`);
+        
+        // Update badge counts
+        const unreadInbox = messages.inbox.filter(m => !m.read && !m.unread === false).length;
+        const urgentCount = messages.urgent.length;
+        
+        const inboxBadge = document.querySelector('[data-folder="inbox"] .badge');
+        const urgentBadge = document.querySelector('[data-folder="urgent"] .badge');
+        
+        if (inboxBadge) inboxBadge.textContent = unreadInbox;
+        if (urgentBadge) urgentBadge.textContent = urgentCount;
+        
+        console.log(`📨 Loaded ${allMessages.length} total messages (${unreadInbox} unread)`);
+        
+        loadMessages(currentFolder);
+        
+        // Setup folder buttons
+        document.querySelectorAll('.folder-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentFolder = btn.dataset.folder;
+                
+                // Update active state
+                document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Load messages
+                loadMessages(currentFolder);
+            });
+        });
+        
+        // Setup compose button
+        document.getElementById('compose-message-btn').addEventListener('click', () => {
+            showToast('Compose message coming soon!', 'info');
+        });
+        
+        // Setup modal close
+        document.getElementById('close-modal').addEventListener('click', closeMessageModal);
+    };
+
+    function loadMessages(folder) {
+        const folderMessages = messages[folder] || [];
+        const folderTitles = {
+            inbox: 'Inbox',
+            sent: 'Sent Messages',
+            archived: 'Archived Messages',
+            urgent: 'Urgent Messages'
+        };
+        
+        document.getElementById('folder-title').textContent = folderTitles[folder];
+        
+        const container = document.getElementById('message-list');
+        
+        if (folderMessages.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 text-center py-8">No messages in this folder</p>';
+            return;
+        }
+        
+        container.innerHTML = folderMessages.map(msg => {
+            const unreadClass = !msg.read ? 'unread' : '';
+            const priorityBadge = msg.priority === 'urgent' 
+                ? '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 font-medium">URGENT</span>'
+                : '';
+            
+            return `
+                <div class="message-item ${unreadClass}" onclick="window.openMessage(${msg.id}, '${folder}')">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="font-medium text-gray-800 message-subject">${msg.subject}</div>
+                            ${priorityBadge}
+                        </div>
+                        <div class="text-xs text-gray-500">${formatMessageDate(msg.date)}</div>
+                    </div>
+                    <div class="text-sm text-gray-600 mb-1">
+                        <strong>From:</strong> ${msg.from}
+                    </div>
+                    <div class="text-sm text-gray-600 truncate">${msg.preview || msg.body.substring(0, 100)}...</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.openMessage = function(messageId, folder) {
+        const folderMessages = messages[folder] || [];
+        const message = folderMessages.find(m => m.id === messageId);
+        
+        if (!message) return;
+        
+        // Mark as read
+        message.read = true;
+        
+        // Update modal
+        document.getElementById('modal-subject').textContent = message.subject;
+        document.getElementById('modal-from').textContent = message.from;
+        document.getElementById('modal-date').textContent = formatMessageDate(message.date);
+        document.getElementById('modal-body').innerHTML = message.body.replace(/\n/g, '<br>');
+        
+        const priorityBadge = message.priority === 'urgent'
+            ? '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 font-medium">URGENT</span>'
+            : '';
+        document.getElementById('modal-priority-badge').innerHTML = priorityBadge;
+        
+        // Show modal
+        document.getElementById('message-modal').classList.remove('hidden');
+        
+        // Reload messages to update unread status
+        loadMessages(folder);
+        
+        console.log('📧 Opened message:', message.subject);
+    };
+
+    function closeMessageModal() {
+        document.getElementById('message-modal').classList.add('hidden');
+    }
+
+    function openComposeModal() {
+        document.getElementById('compose-modal').classList.remove('hidden');
+        document.getElementById('compose-form').reset();
+    }
+
+    function closeComposeModal() {
+        document.getElementById('compose-modal').classList.add('hidden');
+    }
+
+    async function handleSendMessage(e) {
+        e.preventDefault();
+        
+        const to = document.getElementById('compose-to').value;
+        const subject = document.getElementById('compose-subject').value;
+        const messageBody = document.getElementById('compose-message').value;
+        const priority = document.querySelector('input[name="priority"]:checked').value;
+        
+        // Get current user
+        const currentUser = window.appState?.currentUser || { name: 'ARNP Ange Pompee' };
+        
+        // Create new message
+        const newMessage = {
+            from: currentUser.name,
+            to: to,
+            subject: subject,
+            body: messageBody,
+            preview: messageBody.substring(0, 100),
+            read: false, // Unread for recipient
+            type: 'sent',
+            priority: priority
+        };
+        
+        // Add to data manager (persists immediately)
+        const dataManager = await import('../js/data-manager.js').then(m => m.default);
+        const savedMessage = dataManager.addMessage(newMessage);
+        
+        // Add to local sent folder for immediate display
+        if (!messages.sent) messages.sent = [];
+        messages.sent.unshift(savedMessage);
+        
+        // Show success toast
+        const { showToast } = await import('../js/ui-components.js');
+        showToast(`✅ Message sent to ${to}`, 'success');
+        
+        // Close modal and reload
+        closeComposeModal();
+        
+        // Update badge count
+        updateMessageBadge();
+        
+        console.log('📤 Message sent:', newMessage);
+    }
+
+    function updateMessageBadge() {
+        // Update unread count in navigation
+        const unreadCount = (messages.inbox || []).filter(m => !m.read).length;
+        const badge = document.querySelector('.nav-link[data-page="messages"] .badge');
+        if (badge && unreadCount > 0) {
+            badge.textContent = unreadCount;
+        }
+    }
+
+    function formatMessageDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const days = Math.floor(hours / 24);
+        
+        if (hours < 1) return 'Just now';
+        if (hours < 24) return `${hours}h ago`;
+        if (days < 7) return `${days}d ago`;
+        
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    // Auto-initialize
+    if (document.readyState === 'complete') {
+        window.initMessages();
+    }
+</script>

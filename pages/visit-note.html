@@ -1,0 +1,1062 @@
+<!-- ==================== COMPREHENSIVE VISIT NOTE WITH ALL EMAF FEATURES ==================== -->
+
+<div class="p-6">
+    <div id="no-patient-message" class="glass p-8 text-center">
+        <i class="ph ph-user-circle text-6xl text-gray-400 mb-4"></i>
+        <h2 class="text-xl font-bold text-gray-700 mb-2">No Patient Selected</h2>
+        <p class="text-gray-600 mb-4">Please select a patient before creating a visit note.</p>
+        <button onclick="window.location.hash='patient-search'" class="btn-primary">
+            <i class="ph ph-magnifying-glass mr-2"></i>
+            Search Patients
+        </button>
+    </div>
+
+    <div id="visit-note-content" class="hidden">
+        <!-- Progress Indicator -->
+        <div class="glass p-4 mb-6">
+            <div class="flex items-center justify-between text-sm">
+                <span class="font-medium">Documentation Progress</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div id="progress-bar" class="bg-sky-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="glass p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Comprehensive Visit Documentation</h1>
+                    <p class="text-gray-600 mt-1" id="visit-patient-info"></p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="save-draft-btn" class="btn-secondary">
+                        <i class="ph ph-floppy-disk mr-2"></i>
+                        Save Draft
+                    </button>
+                    <button id="sign-note-btn" class="btn-primary">
+                        <i class="ph ph-signature mr-2"></i>
+                        Sign & Complete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visit Information -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Visit Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date of Service *</label>
+                    <input type="date" id="visit-date" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Visit Type *</label>
+                    <select id="visit-type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500">
+                        <option value="">Select type...</option>
+                        <option value="Annual Wellness Visit">Annual Wellness Visit</option>
+                        <option value="Follow-up">Follow-up Visit</option>
+                        <option value="Sick Visit">Sick Visit</option>
+                        <option value="New Patient">New Patient Visit</option>
+                        <option value="Telehealth">Telehealth Visit</option>
+                        <option value="Pre-Operative">Pre-Operative Evaluation</option>
+                        <option value="Post-Operative">Post-Operative Follow-up</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Provider</label>
+                    <input type="text" id="visit-provider" readonly class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Insurance</label>
+                    <select id="insurance-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="Medicare">Medicare</option>
+                        <option value="Medicare Advantage">Medicare Advantage</option>
+                        <option value="Medicaid">Medicaid</option>
+                        <option value="Commercial">Commercial Insurance</option>
+                        <option value="Self-Pay">Self-Pay</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vital Signs -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-heart-straight mr-2 text-red-500"></i>
+                Vital Signs
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">BP *</label>
+                    <input type="text" id="vital-bp" placeholder="120/80" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">HR *</label>
+                    <input type="number" id="vital-hr" placeholder="72" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">RR</label>
+                    <input type="number" id="vital-rr" placeholder="16" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Temp (°F) *</label>
+                    <input type="number" step="0.1" id="vital-temp" placeholder="98.6" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Weight (lbs) *</label>
+                    <input type="number" id="vital-weight" placeholder="150" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Height (in) *</label>
+                    <input type="number" id="vital-height" placeholder="65" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">BMI</label>
+                    <input type="text" id="vital-bmi" readonly class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">O2 Sat %</label>
+                    <input type="number" id="vital-o2" placeholder="98" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+            </div>
+        </div>
+
+        <!-- Chief Complaint & HPI -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Chief Complaint & History</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Chief Complaint *</label>
+                    <input type="text" id="chief-complaint" required placeholder="Patient's reason for visit..." class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">History of Present Illness (HPI)</label>
+                    <textarea id="hpi" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Describe onset, location, duration, character, aggravating/alleviating factors, radiation, timing, severity..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review of Systems -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Review of Systems (ROS)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="constitutional"> Constitutional
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="eyes"> Eyes
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="ent"> ENT
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="cardiovascular"> Cardiovascular
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="respiratory"> Respiratory
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="gastrointestinal"> Gastrointestinal
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="genitourinary"> Genitourinary
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="musculoskeletal"> Musculoskeletal
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="skin"> Skin/Integumentary
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="neurological"> Neurological
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="psychiatric"> Psychiatric
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="endocrine"> Endocrine
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="hematologic"> Hematologic/Lymphatic
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" class="ros-checkbox" data-system="allergic"> Allergic/Immunologic
+                </label>
+            </div>
+            <textarea id="ros-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Additional ROS details..."></textarea>
+        </div>
+
+        <!-- Physical Examination by System -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Physical Examination</h3>
+            
+            <!-- General Appearance -->
+            <div class="mb-4">
+                <h4 class="font-medium text-gray-700 mb-2">General Appearance</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-gen-checkbox" value="well-appearing"> Well-appearing
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-gen-checkbox" value="alert"> Alert & oriented x3
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-gen-checkbox" value="no-distress"> No acute distress
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-gen-checkbox" value="well-nourished"> Well-nourished
+                    </label>
+                </div>
+                <textarea id="pe-general-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Additional general appearance findings..."></textarea>
+            </div>
+
+            <!-- HEENT -->
+            <div class="mb-4">
+                <h4 class="font-medium text-gray-700 mb-2">HEENT</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-heent-checkbox" value="normocephalic"> Normocephalic
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-heent-checkbox" value="perrla"> PERRLA
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-heent-checkbox" value="moist-mucosa"> Moist mucous membranes
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-heent-checkbox" value="no-jvd"> No JVD
+                    </label>
+                </div>
+                <textarea id="pe-heent-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Additional HEENT findings..."></textarea>
+            </div>
+
+            <!-- Cardiovascular -->
+            <div class="mb-4">
+                <h4 class="font-medium text-gray-700 mb-2">Cardiovascular</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-cv-checkbox" value="rrr"> RRR
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-cv-checkbox" value="no-murmur"> No murmurs
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-cv-checkbox" value="no-edema"> No peripheral edema
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-cv-checkbox" value="pulses-intact"> Pulses intact bilaterally
+                    </label>
+                </div>
+                <textarea id="pe-cv-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Additional cardiovascular findings..."></textarea>
+            </div>
+
+            <!-- Respiratory -->
+            <div class="mb-4">
+                <h4 class="font-medium text-gray-700 mb-2">Respiratory</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-resp-checkbox" value="clear-bilat"> Clear to auscultation bilaterally
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-resp-checkbox" value="no-wheezes"> No wheezes
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-resp-checkbox" value="no-rales"> No rales
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-resp-checkbox" value="good-effort"> Good respiratory effort
+                    </label>
+                </div>
+                <textarea id="pe-resp-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Additional respiratory findings..."></textarea>
+            </div>
+
+            <!-- Abdomen -->
+            <div class="mb-4">
+                <h4 class="font-medium text-gray-700 mb-2">Abdomen</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-abd-checkbox" value="soft"> Soft
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-abd-checkbox" value="non-tender"> Non-tender
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-abd-checkbox" value="non-distended"> Non-distended
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-abd-checkbox" value="bowel-sounds"> Normal bowel sounds
+                    </label>
+                </div>
+                <textarea id="pe-abd-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Additional abdominal findings..."></textarea>
+            </div>
+
+            <!-- Musculoskeletal -->
+            <div class="mb-4">
+                <h4 class="font-medium text-gray-700 mb-2">Musculoskeletal</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-msk-checkbox" value="normal-rom"> Normal ROM
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-msk-checkbox" value="no-deformity"> No deformities
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-msk-checkbox" value="normal-strength"> Normal strength 5/5
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-msk-checkbox" value="steady-gait"> Steady gait
+                    </label>
+                </div>
+                <textarea id="pe-msk-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Additional musculoskeletal findings..."></textarea>
+            </div>
+
+            <!-- Neurological -->
+            <div class="mb-4">
+                <h4 class="font-medium text-gray-700 mb-2">Neurological</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-neuro-checkbox" value="alert-oriented"> Alert & oriented x3
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-neuro-checkbox" value="cn-intact"> Cranial nerves intact
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-neuro-checkbox" value="normal-reflexes"> Reflexes 2+ symmetric
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-neuro-checkbox" value="normal-sensation"> Sensation intact
+                    </label>
+                </div>
+                <textarea id="pe-neuro-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Additional neurological findings..."></textarea>
+            </div>
+
+            <!-- Skin -->
+            <div>
+                <h4 class="font-medium text-gray-700 mb-2">Skin/Integumentary</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-skin-checkbox" value="warm-dry"> Warm and dry
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-skin-checkbox" value="no-rash"> No rashes
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-skin-checkbox" value="no-lesions"> No suspicious lesions
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="pe-skin-checkbox" value="good-turgor"> Good skin turgor
+                    </label>
+                </div>
+                <textarea id="pe-skin-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Additional skin findings..."></textarea>
+            </div>
+        </div>
+
+        <!-- Depression Screening (PHQ-2/PHQ-9) -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-brain mr-2 text-purple-500"></i>
+                Depression Screening
+            </h3>
+            
+            <!-- PHQ-2 -->
+            <div class="mb-4 p-4 bg-purple-50 rounded-lg">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="flex items-center gap-2 font-medium">
+                        <input type="checkbox" id="phq2-completed"> PHQ-2 Completed
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm">Score:</label>
+                        <input type="number" id="phq2-score" min="0" max="6" class="w-16 px-2 py-1 border border-gray-300 rounded" placeholder="0-6">
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600">Score ≥3: Positive screen, proceed to PHQ-9</p>
+            </div>
+
+            <!-- PHQ-9 -->
+            <div id="phq9-section" class="p-4 bg-purple-50 rounded-lg">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="flex items-center gap-2 font-medium">
+                        <input type="checkbox" id="phq9-completed"> PHQ-9 Completed
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm">Score:</label>
+                        <input type="number" id="phq9-score" min="0" max="27" class="w-16 px-2 py-1 border border-gray-300 rounded" placeholder="0-27">
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600 mb-2">
+                    <div>1-4: Minimal depression</div>
+                    <div>5-9: Mild depression</div>
+                    <div>10-14: Moderate depression</div>
+                    <div>15-19: Moderately severe depression</div>
+                    <div>20-27: Severe depression</div>
+                </div>
+                <textarea id="phq9-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mt-2" placeholder="Depression screening notes and intervention plan..."></textarea>
+            </div>
+        </div>
+
+        <!-- Fall Risk Assessment -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-warning mr-2 text-yellow-500"></i>
+                Fall Risk Assessment
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <label class="flex items-center gap-2 p-3 bg-yellow-50 rounded-lg">
+                    <input type="checkbox" id="fall-history"> History of falls in past year
+                </label>
+                <label class="flex items-center gap-2 p-3 bg-yellow-50 rounded-lg">
+                    <input type="checkbox" id="fall-gait"> Gait or balance problems
+                </label>
+                <label class="flex items-center gap-2 p-3 bg-red-50 rounded-lg">
+                    <input type="checkbox" id="fall-high-risk"> <strong>HIGH FALL RISK</strong>
+                </label>
+            </div>
+            <textarea id="fall-interventions" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Fall risk interventions and recommendations..."></textarea>
+        </div>
+
+        <!-- Functional Status (ADLs & IADLs) -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-user-check mr-2 text-green-500"></i>
+                Functional Status
+            </h3>
+            
+            <!-- ADLs -->
+            <div class="mb-4">
+                <h4 class="font-medium text-gray-700 mb-3">Activities of Daily Living (ADLs)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Bathing</label>
+                        <select id="adl-bathing" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Dressing</label>
+                        <select id="adl-dressing" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Toileting</label>
+                        <select id="adl-toileting" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Transferring</label>
+                        <select id="adl-transferring" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Eating</label>
+                        <select id="adl-eating" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IADLs -->
+            <div>
+                <h4 class="font-medium text-gray-700 mb-3">Instrumental Activities of Daily Living (IADLs)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Medications</label>
+                        <select id="iadl-medications" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Finances</label>
+                        <select id="iadl-finances" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Meal Prep</label>
+                        <select id="iadl-meals" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Housekeeping</label>
+                        <select id="iadl-housekeeping" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Transportation</label>
+                        <select id="iadl-transportation" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="independent">Independent</option>
+                            <option value="needs-assistance">Needs Assistance</option>
+                            <option value="dependent">Dependent</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <textarea id="functional-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg mt-4 text-sm" placeholder="Additional functional status notes..."></textarea>
+        </div>
+
+        <!-- Counseling & Education -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-chalkboard-teacher mr-2 text-sky-500"></i>
+                Patient Counseling & Education
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="diet-nutrition"> Diet & Nutrition
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="exercise"> Exercise/Physical Activity
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="weight-mgmt"> Weight Management
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="smoking-cessation"> Smoking Cessation
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="alcohol-use"> Alcohol Use
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="med-adherence"> Medication Adherence
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="fall-prevention"> Fall Prevention
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="advance-directives"> Advance Directives
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="diabetic-foot-care"> Diabetic Foot Care
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" class="counseling-checkbox" value="depression-mgmt"> Depression Management
+                </label>
+            </div>
+            <textarea id="counseling-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Counseling details and patient understanding..."></textarea>
+        </div>
+
+        <!-- Assessment (ICD-10 Diagnoses) -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-clipboard-text mr-2 text-sky-500"></i>
+                Assessment / Diagnoses
+            </h3>
+            
+            <!-- ICD-10 Search -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Add ICD-10 Diagnosis *</label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="icd10-search" 
+                        placeholder="Search by code or description (e.g., E11.65 or diabetes)..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
+                        autocomplete="off"
+                    >
+                    <div id="icd10-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- Selected Diagnoses -->
+            <div id="diagnoses-list" class="space-y-2">
+                <p class="text-gray-500 text-sm">No diagnoses added yet. Use the search above to add ICD-10 codes.</p>
+            </div>
+        </div>
+
+        <!-- Plan -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Treatment Plan</h3>
+            <textarea id="plan" rows="8" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Treatment plan, medications, orders, referrals, follow-up instructions, patient education..."></textarea>
+        </div>
+
+        <!-- RAF Score -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Risk Adjustment</h3>
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Previous RAF Score</label>
+                    <input type="number" step="0.001" id="prev-raf" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="1.234">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current RAF Score</label>
+                    <input type="number" step="0.001" id="current-raf" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="1.456">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">RAF Change</label>
+                    <input type="text" id="raf-change" readonly class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg">
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4 justify-end">
+            <button class="btn-secondary" onclick="window.loadPage('patient-chart')">
+                <i class="ph ph-x mr-2"></i>
+                Cancel
+            </button>
+            <button id="save-draft-btn-bottom" class="btn-secondary">
+                <i class="ph ph-floppy-disk mr-2"></i>
+                Save Draft
+            </button>
+            <button id="sign-note-btn-bottom" class="btn-primary">
+                <i class="ph ph-signature mr-2"></i>
+                Sign & Complete
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { searchICD10 } from '../data/icd10-codes.js';
+    import { showToast, showConfirm } from '../js/ui-components.js';
+
+    console.log('📝 Initializing comprehensive visit note page...');
+
+    let selectedDiagnoses = [];
+    let formProgress = 0;
+
+    window.initVisitNote = function() {
+        console.log('📄 Visit Note page loaded');
+        
+        // Try to get patient from app state or localStorage
+        let patient = window.appState.currentPatient;
+        
+        if (!patient) {
+            // Try loading from localStorage
+            const storedPatient = localStorage.getItem('currentPatient');
+            if (storedPatient) {
+                try {
+                    patient = JSON.parse(storedPatient);
+                    window.appState.currentPatient = patient;
+                    console.log('✅ Loaded patient from localStorage:', patient.name);
+                } catch (error) {
+                    console.error('Error parsing stored patient:', error);
+                }
+            }
+        }
+        
+        if (!patient) {
+            console.log('⚠️ No patient selected');
+            document.getElementById('no-patient-message').classList.remove('hidden');
+            document.getElementById('visit-note-content').classList.add('hidden');
+            return;
+        }
+        
+        console.log('✅ Creating visit note for patient:', patient.name);
+        
+        document.getElementById('no-patient-message').classList.add('hidden');
+        document.getElementById('visit-note-content').classList.remove('hidden');
+        
+        // Set patient info
+        document.getElementById('visit-patient-info').textContent = `Patient: ${patient.name} (MRN: ${patient.mrn})`;
+        
+        // Set defaults
+        document.getElementById('visit-date').valueAsDate = new Date();
+        document.getElementById('visit-provider').value = window.appState.currentUser.name;
+        
+        // Setup BMI calculator
+        setupBMICalculator();
+        
+        // Setup RAF calculator
+        setupRAFCalculator();
+        
+        // Setup ICD-10 autocomplete
+        setupICD10Autocomplete();
+        
+        // Setup PHQ-2 trigger for PHQ-9
+        setupPHQLogic();
+        
+        // Setup progress tracking
+        setupProgressTracking();
+        
+        // Setup save buttons
+        document.getElementById('save-draft-btn').addEventListener('click', saveDraft);
+        document.getElementById('save-draft-btn-bottom').addEventListener('click', saveDraft);
+        document.getElementById('sign-note-btn').addEventListener('click', signNote);
+        document.getElementById('sign-note-btn-bottom').addEventListener('click', signNote);
+    };
+
+    function setupBMICalculator() {
+        const weightInput = document.getElementById('vital-weight');
+        const heightInput = document.getElementById('vital-height');
+        const bmiInput = document.getElementById('vital-bmi');
+        
+        [weightInput, heightInput].forEach(input => {
+            input.addEventListener('input', () => {
+                const weight = parseFloat(weightInput.value);
+                const height = parseFloat(heightInput.value);
+                if (weight && height) {
+                    const bmi = ((weight / (height * height)) * 703).toFixed(1);
+                    bmiInput.value = bmi;
+                }
+            });
+        });
+    }
+
+    function setupRAFCalculator() {
+        const prevRAF = document.getElementById('prev-raf');
+        const currentRAF = document.getElementById('current-raf');
+        const rafChange = document.getElementById('raf-change');
+        
+        [prevRAF, currentRAF].forEach(input => {
+            input.addEventListener('input', () => {
+                const prev = parseFloat(prevRAF.value);
+                const current = parseFloat(currentRAF.value);
+                if (prev && current) {
+                    const change = (current - prev).toFixed(3);
+                    const percent = ((change / prev) * 100).toFixed(1);
+                    rafChange.value = `${change > 0 ? '+' : ''}${change} (${percent}%)`;
+                }
+            });
+        });
+    }
+
+    function setupPHQLogic() {
+        const phq2Score = document.getElementById('phq2-score');
+        const phq9Section = document.getElementById('phq9-section');
+        
+        phq2Score.addEventListener('input', (e) => {
+            const score = parseInt(e.target.value);
+            if (score >= 3) {
+                phq9Section.style.borderColor = '#0ea5e9';
+                phq9Section.style.borderWidth = '2px';
+                showToast('PHQ-2 positive (≥3). PHQ-9 screening recommended.', 'info');
+            }
+        });
+    }
+
+    function setupProgressTracking() {
+        const requiredFields = [
+            'visit-date', 'visit-type', 'vital-bp', 'vital-hr', 'vital-temp',
+            'vital-weight', 'vital-height', 'chief-complaint'
+        ];
+        
+        const updateProgress = () => {
+            let completed = 0;
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && field.value) completed++;
+            });
+            
+            if (selectedDiagnoses.length > 0) completed += 2;
+            
+            const percent = Math.round((completed / (requiredFields.length + 2)) * 100);
+            document.getElementById('progress-percent').textContent = `${percent}%`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        };
+        
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) field.addEventListener('input', updateProgress);
+        });
+        
+        updateProgress();
+    }
+
+    function setupICD10Autocomplete() {
+        const searchInput = document.getElementById('icd10-search');
+        const dropdown = document.getElementById('icd10-dropdown');
+        
+        searchInput.addEventListener('input', debounce((e) => {
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+            
+            const results = searchICD10(query, 15);
+            
+            if (results.length === 0) {
+                dropdown.innerHTML = '<div class="p-3 text-sm text-gray-500">No matching diagnoses found</div>';
+                dropdown.classList.remove('hidden');
+                return;
+            }
+            
+            dropdown.innerHTML = results.map(code => `
+                <div class="icd10-result p-3 hover:bg-sky-50 cursor-pointer border-b border-gray-100 last:border-0" 
+                     data-code="${code.code}" 
+                     data-description="${code.description}"
+                     data-hcc="${code.hcc}">
+                    <div class="font-mono font-bold text-sky-600 text-sm">${code.code}</div>
+                    <div class="text-sm text-gray-700">${code.description}</div>
+                    ${code.hcc ? `<div class="text-xs text-purple-600 mt-1">${code.hcc}</div>` : ''}
+                </div>
+            `).join('');
+            
+            dropdown.classList.remove('hidden');
+            
+            dropdown.querySelectorAll('.icd10-result').forEach(item => {
+                item.addEventListener('click', () => {
+                    addDiagnosis({
+                        code: item.dataset.code,
+                        description: item.dataset.description,
+                        hcc: item.dataset.hcc
+                    });
+                    searchInput.value = '';
+                    dropdown.classList.add('hidden');
+                });
+            });
+        }, 300));
+        
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    }
+
+    function addDiagnosis(diagnosis) {
+        if (selectedDiagnoses.some(d => d.code === diagnosis.code)) {
+            showToast('This diagnosis is already added', 'warning');
+            return;
+        }
+        
+        selectedDiagnoses.push(diagnosis);
+        renderDiagnoses();
+        showToast(`Added: ${diagnosis.code}`, 'success');
+        console.log('➕ Added diagnosis:', diagnosis.code);
+    }
+
+    function removeDiagnosis(code) {
+        selectedDiagnoses = selectedDiagnoses.filter(d => d.code !== code);
+        renderDiagnoses();
+        showToast('Diagnosis removed', 'info');
+    }
+
+    function renderDiagnoses() {
+        const container = document.getElementById('diagnoses-list');
+        
+        if (selectedDiagnoses.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 text-sm">No diagnoses added yet. Use the search above to add ICD-10 codes.</p>';
+            return;
+        }
+        
+        container.innerHTML = selectedDiagnoses.map(d => `
+            <div class="flex items-center justify-between p-4 bg-sky-50 border border-sky-200 rounded-lg">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono font-bold text-sky-700">${d.code}</span>
+                        <span class="text-gray-700">${d.description}</span>
+                        ${d.hcc ? `<span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-700">${d.hcc}</span>` : ''}
+                    </div>
+                </div>
+                <button onclick="window.removeDiagnosis('${d.code}')" class="text-red-500 hover:text-red-700 ml-4">
+                    <i class="ph ph-trash text-xl"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    window.removeDiagnosis = removeDiagnosis;
+
+    function saveDraft() {
+        const visitData = gatherVisitData();
+        console.log('💾 Saving draft...', visitData);
+        showToast('Visit note saved as draft', 'success');
+    }
+
+    async function signNote() {
+        const confirmed = await showConfirm(
+            'Are you sure you want to sign and complete this visit note? This action cannot be undone.',
+            'Sign Visit Note'
+        );
+        
+        if (!confirmed) return;
+        
+        const visitData = gatherVisitData();
+        
+        // Validate
+        if (!visitData.chiefComplaint) {
+            showToast('Please enter a chief complaint', 'error');
+            return;
+        }
+        
+        if (selectedDiagnoses.length === 0) {
+            showToast('Please add at least one diagnosis', 'error');
+            return;
+        }
+        
+        console.log('✍️ Signing visit note...', visitData);
+        
+        // Add to patient's visit history
+        const patient = window.appState.currentPatient;
+        const newVisit = {
+            date: visitData.visitDate,
+            type: visitData.visitType,
+            provider: visitData.provider,
+            chiefComplaint: visitData.chiefComplaint,
+            hpi: visitData.hpi,
+            assessment: selectedDiagnoses.map(d => `${d.code} - ${d.description}`).join('; '),
+            plan: visitData.plan
+        };
+        
+        if (!patient.visits) patient.visits = [];
+        patient.visits.unshift(newVisit);
+        
+        // Add vitals
+        if (visitData.vitals.bp) {
+            if (!patient.vitals) patient.vitals = [];
+            patient.vitals.unshift({
+                date: visitData.visitDate,
+                ...visitData.vitals
+            });
+        }
+        
+        showToast('Visit note signed and completed!', 'success');
+        
+        setTimeout(() => {
+            window.loadPage('patient-chart');
+        }, 1000);
+    }
+
+    function gatherVisitData() {
+        return {
+            visitDate: document.getElementById('visit-date').value,
+            visitType: document.getElementById('visit-type').value,
+            provider: document.getElementById('visit-provider').value,
+            insurance: document.getElementById('insurance-type').value,
+            vitals: {
+                bp: document.getElementById('vital-bp').value,
+                hr: document.getElementById('vital-hr').value,
+                rr: document.getElementById('vital-rr').value,
+                temp: document.getElementById('vital-temp').value,
+                weight: document.getElementById('vital-weight').value,
+                height: document.getElementById('vital-height').value,
+                bmi: document.getElementById('vital-bmi').value,
+                o2sat: document.getElementById('vital-o2').value
+            },
+            chiefComplaint: document.getElementById('chief-complaint').value,
+            hpi: document.getElementById('hpi').value,
+            ros: {
+                systems: Array.from(document.querySelectorAll('.ros-checkbox:checked')).map(cb => cb.dataset.system),
+                notes: document.getElementById('ros-notes').value
+            },
+            physicalExam: gatherPhysicalExam(),
+            depression: {
+                phq2: {
+                    completed: document.getElementById('phq2-completed').checked,
+                    score: document.getElementById('phq2-score').value
+                },
+                phq9: {
+                    completed: document.getElementById('phq9-completed').checked,
+                    score: document.getElementById('phq9-score').value,
+                    notes: document.getElementById('phq9-notes').value
+                }
+            },
+            fallRisk: {
+                history: document.getElementById('fall-history').checked,
+                gaitProblems: document.getElementById('fall-gait').checked,
+                highRisk: document.getElementById('fall-high-risk').checked,
+                interventions: document.getElementById('fall-interventions').value
+            },
+            functionalStatus: {
+                adls: {
+                    bathing: document.getElementById('adl-bathing').value,
+                    dressing: document.getElementById('adl-dressing').value,
+                    toileting: document.getElementById('adl-toileting').value,
+                    transferring: document.getElementById('adl-transferring').value,
+                    eating: document.getElementById('adl-eating').value
+                },
+                iadls: {
+                    medications: document.getElementById('iadl-medications').value,
+                    finances: document.getElementById('iadl-finances').value,
+                    meals: document.getElementById('iadl-meals').value,
+                    housekeeping: document.getElementById('iadl-housekeeping').value,
+                    transportation: document.getElementById('iadl-transportation').value
+                },
+                notes: document.getElementById('functional-notes').value
+            },
+            counseling: {
+                topics: Array.from(document.querySelectorAll('.counseling-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('counseling-notes').value
+            },
+            diagnoses: selectedDiagnoses,
+            plan: document.getElementById('plan').value,
+            rafScore: {
+                previous: document.getElementById('prev-raf').value,
+                current: document.getElementById('current-raf').value,
+                change: document.getElementById('raf-change').value
+            }
+        };
+    }
+
+    function gatherPhysicalExam() {
+        return {
+            general: {
+                findings: Array.from(document.querySelectorAll('.pe-gen-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('pe-general-notes').value
+            },
+            heent: {
+                findings: Array.from(document.querySelectorAll('.pe-heent-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('pe-heent-notes').value
+            },
+            cardiovascular: {
+                findings: Array.from(document.querySelectorAll('.pe-cv-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('pe-cv-notes').value
+            },
+            respiratory: {
+                findings: Array.from(document.querySelectorAll('.pe-resp-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('pe-resp-notes').value
+            },
+            abdomen: {
+                findings: Array.from(document.querySelectorAll('.pe-abd-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('pe-abd-notes').value
+            },
+            musculoskeletal: {
+                findings: Array.from(document.querySelectorAll('.pe-msk-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('pe-msk-notes').value
+            },
+            neurological: {
+                findings: Array.from(document.querySelectorAll('.pe-neuro-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('pe-neuro-notes').value
+            },
+            skin: {
+                findings: Array.from(document.querySelectorAll('.pe-skin-checkbox:checked')).map(cb => cb.value),
+                notes: document.getElementById('pe-skin-notes').value
+            }
+        };
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    if (document.readyState === 'complete') {
+        window.initVisitNote();
+    }
+</script>

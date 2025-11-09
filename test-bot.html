@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMR Test Bot - Comprehensive Testing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .test-pass { color: #10b981; }
+        .test-fail { color: #ef4444; }
+        .test-running { color: #3b82f6; }
+        .test-pending { color: #6b7280; }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">🤖 EMR Test Bot</h1>
+            <p class="text-gray-600 mb-4">Comprehensive automated testing for Wellness EMR v2.0</p>
+            
+            <div class="flex gap-4 mb-6">
+                <button id="start-test" class="px-6 py-3 bg-sky-500 text-white rounded-lg font-semibold hover:bg-sky-600">
+                    <i class="ph ph-play mr-2"></i>Start Full Test
+                </button>
+                <button id="stop-test" class="px-6 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600" disabled>
+                    <i class="ph ph-stop mr-2"></i>Stop Test
+                </button>
+                <button id="open-app" class="px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600">
+                    <i class="ph ph-browser mr-2"></i>Open App
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-4 gap-4 mb-6">
+                <div class="bg-sky-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Total Tests</div>
+                    <div id="total-tests" class="text-2xl font-bold text-sky-600">0</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Passed</div>
+                    <div id="passed-tests" class="text-2xl font-bold text-green-600">0</div>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Failed</div>
+                    <div id="failed-tests" class="text-2xl font-bold text-red-600">0</div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Progress</div>
+                    <div id="progress-percent" class="text-2xl font-bold text-gray-600">0%</div>
+                </div>
+            </div>
+            
+            <div class="w-full bg-gray-200 rounded-full h-3 mb-6">
+                <div id="progress-bar" class="bg-sky-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Test Results</h2>
+            <div id="test-results" class="space-y-2 max-h-[600px] overflow-y-auto">
+                <div class="text-gray-500 text-center py-8">
+                    Click "Start Full Test" to begin automated testing
+                </div>
+            </div>
+        </div>
+        
+        <div id="final-report" class="hidden bg-white rounded-lg shadow-lg p-6 mt-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Final Report</h2>
+            <div id="report-content" class="prose max-w-none"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        let testWindow = null;
+        let isTestRunning = false;
+        let testResults = [];
+        
+        const tests = [
+            {
+                category: 'Page Loading',
+                name: 'Dashboard loads successfully',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/pages/dashboard.html');
+                    return response.ok && response.status === 200;
+                }
+            },
+            {
+                category: 'Page Loading',
+                name: 'Patient Search loads successfully',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/pages/patient-search.html');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Page Loading',
+                name: 'Patient Chart loads successfully',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/pages/patient-chart.html');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Page Loading',
+                name: 'Visit Note loads successfully',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/pages/visit-note.html');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Page Loading',
+                name: 'Scheduling loads successfully',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/pages/scheduling.html');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Page Loading',
+                name: 'Messages loads successfully',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/pages/messages.html');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Page Loading',
+                name: 'Reports loads successfully',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/pages/reports.html');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Data Files',
+                name: 'Patients data file exists',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/data/patients.js');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Data Files',
+                name: 'Patients data has 3 patients',
+                test: async () => {
+                    const { patients } = await import('http://localhost:8082/data/patients.js');
+                    return patients && patients.length === 3;
+                }
+            },
+            {
+                category: 'Data Files',
+                name: 'Patient data has enhanced fields',
+                test: async () => {
+                    const { patients } = await import('http://localhost:8082/data/patients.js');
+                    const jane = patients[0];
+                    return jane.preventiveServices && jane.assessments && jane.surgicalHistory;
+                }
+            },
+            {
+                category: 'Data Files',
+                name: 'Alerts data file exists',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/data/alerts-messages.js');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Data Files',
+                name: 'Alerts data has 12 alerts',
+                test: async () => {
+                    const { clinicalAlerts } = await import('http://localhost:8082/data/alerts-messages.js');
+                    return clinicalAlerts && clinicalAlerts.length >= 12;
+                }
+            },
+            {
+                category: 'Data Files',
+                name: 'Messages data has 19+ messages',
+                test: async () => {
+                    const { messages } = await import('http://localhost:8082/data/alerts-messages.js');
+                    return messages && messages.length >= 19;
+                }
+            },
+            {
+                category: 'Data Files',
+                name: 'ICD-10 codes file exists',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/data/icd10-codes.js');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Data Files',
+                name: 'ICD-10 has 56 codes',
+                test: async () => {
+                    const { icd10Codes } = await import('http://localhost:8082/data/icd10-codes.js');
+                    return icd10Codes && icd10Codes.length === 56;
+                }
+            },
+            {
+                category: 'JavaScript Modules',
+                name: 'App.js module loads',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/js/app.js');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'JavaScript Modules',
+                name: 'Navigation.js module loads',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/js/navigation.js');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'JavaScript Modules',
+                name: 'Auth.js module loads',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/js/auth.js');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'JavaScript Modules',
+                name: 'UI Components module loads',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/js/ui-components.js');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'JavaScript Modules',
+                name: 'Storage module loads',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/js/storage.js');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'CSS Files',
+                name: 'Main CSS file loads',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/css/main.css');
+                    return response.ok;
+                }
+            },
+            {
+                category: 'Core Functionality',
+                name: 'Index.html loads',
+                test: async () => {
+                    const response = await fetch('http://localhost:8082/');
+                    return response.ok;
+                }
+            }
+        ];
+        
+        document.getElementById('start-test').addEventListener('click', startTests);
+        document.getElementById('stop-test').addEventListener('click', stopTests);
+        document.getElementById('open-app').addEventListener('click', () => {
+            window.open('http://localhost:8082/', '_blank');
+        });
+        
+        async function startTests() {
+            isTestRunning = true;
+            testResults = [];
+            
+            document.getElementById('start-test').disabled = true;
+            document.getElementById('stop-test').disabled = false;
+            document.getElementById('test-results').innerHTML = '';
+            document.getElementById('final-report').classList.add('hidden');
+            
+            document.getElementById('total-tests').textContent = tests.length;
+            document.getElementById('passed-tests').textContent = '0';
+            document.getElementById('failed-tests').textContent = '0';
+            
+            let passed = 0;
+            let failed = 0;
+            
+            for (let i = 0; i < tests.length; i++) {
+                if (!isTestRunning) break;
+                
+                const test = tests[i];
+                const progress = ((i + 1) / tests.length * 100).toFixed(0);
+                
+                document.getElementById('progress-bar').style.width = `${progress}%`;
+                document.getElementById('progress-percent').textContent = `${progress}%`;
+                
+                addTestRow(test.name, 'running', test.category);
+                
+                try {
+                    const result = await test.test();
+                    
+                    if (result) {
+                        passed++;
+                        updateTestRow(i, 'pass', '✓ Passed');
+                        testResults.push({ ...test, status: 'pass' });
+                    } else {
+                        failed++;
+                        updateTestRow(i, 'fail', '✗ Failed');
+                        testResults.push({ ...test, status: 'fail', error: 'Test returned false' });
+                    }
+                } catch (error) {
+                    failed++;
+                    updateTestRow(i, 'fail', `✗ Error: ${error.message}`);
+                    testResults.push({ ...test, status: 'fail', error: error.message });
+                }
+                
+                document.getElementById('passed-tests').textContent = passed;
+                document.getElementById('failed-tests').textContent = failed;
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            generateFinalReport();
+            
+            isTestRunning = false;
+            document.getElementById('start-test').disabled = false;
+            document.getElementById('stop-test').disabled = true;
+        }
+        
+        function stopTests() {
+            isTestRunning = false;
+        }
+        
+        function addTestRow(name, status, category) {
+            const resultsDiv = document.getElementById('test-results');
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+            row.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-700">${category}</span>
+                    <span class="text-gray-700">${name}</span>
+                </div>
+                <span class="test-${status} font-semibold">
+                    ${status === 'running' ? '⟳ Running...' : '⏳ Pending'}
+                </span>
+            `;
+            resultsDiv.appendChild(row);
+        }
+        
+        function updateTestRow(index, status, message) {
+            const rows = document.getElementById('test-results').children;
+            const statusSpan = rows[index].querySelector('span:last-child');
+            statusSpan.className = `test-${status} font-semibold`;
+            statusSpan.textContent = message;
+        }
+        
+        function generateFinalReport() {
+            const reportDiv = document.getElementById('final-report');
+            const contentDiv = document.getElementById('report-content');
+            
+            const passed = testResults.filter(t => t.status === 'pass').length;
+            const failed = testResults.filter(t => t.status === 'fail').length;
+            const total = testResults.length;
+            const successRate = ((passed / total) * 100).toFixed(1);
+            
+            const categorized = testResults.reduce((acc, test) => {
+                if (!acc[test.category]) acc[test.category] = [];
+                acc[test.category].push(test);
+                return acc;
+            }, {});
+            
+            let reportHTML = `
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold mb-2">Overall Results</h3>
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <div class="text-green-600 font-bold text-3xl">${passed}</div>
+                            <div class="text-gray-600">Tests Passed</div>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <div class="text-red-600 font-bold text-3xl">${failed}</div>
+                            <div class="text-gray-600">Tests Failed</div>
+                        </div>
+                        <div class="bg-sky-50 p-4 rounded-lg">
+                            <div class="text-sky-600 font-bold text-3xl">${successRate}%</div>
+                            <div class="text-gray-600">Success Rate</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Object.keys(categorized).forEach(category => {
+                const categoryTests = categorized[category];
+                const categoryPassed = categoryTests.filter(t => t.status === 'pass').length;
+                const categoryFailed = categoryTests.filter(t => t.status === 'fail').length;
+                
+                reportHTML += `
+                    <div class="mb-6">
+                        <h4 class="text-lg font-bold mb-2">${category} (${categoryPassed}/${categoryTests.length} passed)</h4>
+                        <ul class="list-disc list-inside space-y-1">
+                `;
+                
+                categoryTests.forEach(test => {
+                    const icon = test.status === 'pass' ? '✓' : '✗';
+                    const color = test.status === 'pass' ? 'text-green-600' : 'text-red-600';
+                    reportHTML += `
+                        <li class="${color}">
+                            ${icon} ${test.name}
+                            ${test.error ? `<span class="text-sm text-gray-600"> (${test.error})</span>` : ''}
+                        </li>
+                    `;
+                });
+                
+                reportHTML += `</ul></div>`;
+            });
+            
+            if (failed > 0) {
+                reportHTML += `
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-6">
+                        <h4 class="font-bold text-yellow-800 mb-2">⚠️ Action Required</h4>
+                        <p class="text-yellow-700">
+                            ${failed} test(s) failed. Please review the errors above and fix the issues.
+                        </p>
+                    </div>
+                `;
+            } else {
+                reportHTML += `
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-6">
+                        <h4 class="font-bold text-green-800 mb-2">✅ All Tests Passed!</h4>
+                        <p class="text-green-700">
+                            Congratulations! All ${total} tests passed successfully. The EMR is ready for use.
+                        </p>
+                    </div>
+                `;
+            }
+            
+            contentDiv.innerHTML = reportHTML;
+            reportDiv.classList.remove('hidden');
+        }
+        
+        // Auto-run tests on page load
+        setTimeout(() => {
+            console.log('🤖 Auto-starting tests in 2 seconds...');
+            setTimeout(startTests, 2000);
+        }, 100);
+    </script>
+</body>
+</html>

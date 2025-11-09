@@ -1,0 +1,487 @@
+<!-- ==================== VISIT NOTE / SOAP NOTE PAGE ==================== -->
+
+<div class="p-6">
+    <div id="no-patient-message" class="glass p-8 text-center">
+        <i class="ph ph-user-circle text-6xl text-gray-400 mb-4"></i>
+        <h2 class="text-xl font-bold text-gray-700 mb-2">No Patient Selected</h2>
+        <p class="text-gray-600 mb-4">Please select a patient before creating a visit note.</p>
+        <button onclick="window.loadPage('patient-search')" class="btn-primary">
+            <i class="ph ph-magnifying-glass mr-2"></i>
+            Search Patients
+        </button>
+    </div>
+
+    <div id="visit-note-content" class="hidden">
+        <!-- Header -->
+        <div class="glass p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Visit Documentation</h1>
+                    <p class="text-gray-600 mt-1" id="visit-patient-info"></p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="save-draft-btn" class="btn-secondary">
+                        <i class="ph ph-floppy-disk mr-2"></i>
+                        Save Draft
+                    </button>
+                    <button id="sign-note-btn" class="btn-primary">
+                        <i class="ph ph-signature mr-2"></i>
+                        Sign & Complete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visit Info -->
+        <div class="glass p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Visit Date</label>
+                    <input type="date" id="visit-date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Visit Type</label>
+                    <select id="visit-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500">
+                        <option value="Follow-up">Follow-up Visit</option>
+                        <option value="Sick Visit">Sick Visit</option>
+                        <option value="Annual Physical">Annual Physical</option>
+                        <option value="New Patient">New Patient</option>
+                        <option value="Telehealth">Telehealth Visit</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Provider</label>
+                    <input type="text" id="visit-provider" class="w-full px-3 py-2 border border-gray-300 rounded-lg" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vitals -->
+        <div class="glass p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ph ph-heart-straight mr-2 text-red-500"></i>
+                Vital Signs
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">BP</label>
+                    <input type="text" id="vital-bp" placeholder="120/80" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">HR</label>
+                    <input type="number" id="vital-hr" placeholder="72" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Temp (°F)</label>
+                    <input type="number" step="0.1" id="vital-temp" placeholder="98.6" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Weight (lbs)</label>
+                    <input type="number" id="vital-weight" placeholder="150" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Height (in)</label>
+                    <input type="number" id="vital-height" placeholder="65" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">BMI</label>
+                    <input type="text" id="vital-bmi" readonly class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">O2 Sat %</label>
+                    <input type="number" id="vital-o2" placeholder="98" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+            </div>
+        </div>
+
+        <!-- SOAP Note -->
+        <div class="space-y-6">
+            <!-- Chief Complaint -->
+            <div class="glass p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Chief Complaint</h3>
+                <input type="text" id="chief-complaint" placeholder="Patient's reason for visit..." class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+
+            <!-- HPI -->
+            <div class="glass p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">History of Present Illness (HPI)</h3>
+                <textarea id="hpi" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Describe onset, location, duration, character, aggravating/alleviating factors, radiation, timing, severity..."></textarea>
+            </div>
+
+            <!-- ROS -->
+            <div class="glass p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Review of Systems (ROS)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="constitutional"> Constitutional
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="eyes"> Eyes
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="ent"> ENT
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="cardiovascular"> Cardiovascular
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="respiratory"> Respiratory
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="gastrointestinal"> Gastrointestinal
+                        </label>
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="genitourinary"> Genitourinary
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="musculoskeletal"> Musculoskeletal
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="skin"> Skin
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="neurological"> Neurological
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="psychiatric"> Psychiatric
+                        </label>
+                        <label class="flex items-center gap-2 mb-2">
+                            <input type="checkbox" class="ros-checkbox" data-system="endocrine"> Endocrine
+                        </label>
+                    </div>
+                </div>
+                <textarea id="ros-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg mt-4" placeholder="Additional ROS notes..."></textarea>
+            </div>
+
+            <!-- Physical Exam -->
+            <div class="glass p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Physical Examination</h3>
+                <textarea id="physical-exam" rows="8" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="General appearance, HEENT, cardiovascular, respiratory, abdominal, musculoskeletal, neurological exam findings..."></textarea>
+            </div>
+
+            <!-- Assessment (Diagnoses) -->
+            <div class="glass p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="ph ph-clipboard-text mr-2 text-sky-500"></i>
+                    Assessment / Diagnoses
+                </h3>
+                
+                <!-- ICD-10 Search -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Add ICD-10 Diagnosis</label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="icd10-search" 
+                            placeholder="Search by code or description (e.g., E11.65 or diabetes)..."
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
+                            autocomplete="off"
+                        >
+                        <div id="icd10-dropdown" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
+                    </div>
+                </div>
+
+                <!-- Selected Diagnoses -->
+                <div id="diagnoses-list" class="space-y-2">
+                    <p class="text-gray-500 text-sm">No diagnoses added yet. Use the search above to add ICD-10 codes.</p>
+                </div>
+            </div>
+
+            <!-- Plan -->
+            <div class="glass p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Plan</h3>
+                <textarea id="plan" rows="8" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Treatment plan, medications, orders, follow-up instructions, patient education..."></textarea>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4 mt-6 justify-end">
+            <button class="btn-secondary" onclick="window.loadPage('patient-chart')">
+                <i class="ph ph-x mr-2"></i>
+                Cancel
+            </button>
+            <button id="save-draft-btn-bottom" class="btn-secondary">
+                <i class="ph ph-floppy-disk mr-2"></i>
+                Save Draft
+            </button>
+            <button id="sign-note-btn-bottom" class="btn-primary">
+                <i class="ph ph-signature mr-2"></i>
+                Sign & Complete
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { searchICD10 } from '../data/icd10-codes.js';
+    import { showToast, showConfirm } from '../js/ui-components.js';
+
+    console.log('📝 Initializing visit note page...');
+
+    let selectedDiagnoses = [];
+
+    window.initVisitNote = function() {
+        console.log('📄 Visit Note page loaded');
+        
+        const patient = window.appState.currentPatient;
+        
+        if (!patient) {
+            document.getElementById('no-patient-message').classList.remove('hidden');
+            document.getElementById('visit-note-content').classList.add('hidden');
+            return;
+        }
+        
+        document.getElementById('no-patient-message').classList.add('hidden');
+        document.getElementById('visit-note-content').classList.remove('hidden');
+        
+        // Set patient info
+        document.getElementById('visit-patient-info').textContent = `Patient: ${patient.name} (MRN: ${patient.mrn})`;
+        
+        // Set defaults
+        document.getElementById('visit-date').valueAsDate = new Date();
+        document.getElementById('visit-provider').value = window.appState.currentUser.name;
+        
+        // Setup BMI calculator
+        const weightInput = document.getElementById('vital-weight');
+        const heightInput = document.getElementById('vital-height');
+        const bmiInput = document.getElementById('vital-bmi');
+        
+        [weightInput, heightInput].forEach(input => {
+            input.addEventListener('input', () => {
+                const weight = parseFloat(weightInput.value);
+                const height = parseFloat(heightInput.value);
+                if (weight && height) {
+                    const bmi = ((weight / (height * height)) * 703).toFixed(1);
+                    bmiInput.value = bmi;
+                }
+            });
+        });
+        
+        // Setup ICD-10 autocomplete
+        setupICD10Autocomplete();
+        
+        // Setup save buttons
+        document.getElementById('save-draft-btn').addEventListener('click', saveDraft);
+        document.getElementById('save-draft-btn-bottom').addEventListener('click', saveDraft);
+        document.getElementById('sign-note-btn').addEventListener('click', signNote);
+        document.getElementById('sign-note-btn-bottom').addEventListener('click', signNote);
+    };
+
+    function setupICD10Autocomplete() {
+        const searchInput = document.getElementById('icd10-search');
+        const dropdown = document.getElementById('icd10-dropdown');
+        
+        searchInput.addEventListener('input', debounce((e) => {
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+            
+            const results = searchICD10(query, 15);
+            
+            if (results.length === 0) {
+                dropdown.innerHTML = '<div class="p-3 text-sm text-gray-500">No matching diagnoses found</div>';
+                dropdown.classList.remove('hidden');
+                return;
+            }
+            
+            dropdown.innerHTML = results.map(code => `
+                <div class="icd10-result p-3 hover:bg-sky-50 cursor-pointer border-b border-gray-100 last:border-0" 
+                     data-code="${code.code}" 
+                     data-description="${code.description}"
+                     data-hcc="${code.hcc}">
+                    <div class="font-mono font-bold text-sky-600 text-sm">${code.code}</div>
+                    <div class="text-sm text-gray-700">${code.description}</div>
+                    ${code.hcc ? `<div class="text-xs text-purple-600 mt-1">${code.hcc}</div>` : ''}
+                </div>
+            `).join('');
+            
+            dropdown.classList.remove('hidden');
+            
+            // Add click handlers
+            dropdown.querySelectorAll('.icd10-result').forEach(item => {
+                item.addEventListener('click', () => {
+                    addDiagnosis({
+                        code: item.dataset.code,
+                        description: item.dataset.description,
+                        hcc: item.dataset.hcc
+                    });
+                    searchInput.value = '';
+                    dropdown.classList.add('hidden');
+                });
+            });
+        }, 300));
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    }
+
+    function addDiagnosis(diagnosis) {
+        // Check for duplicates
+        if (selectedDiagnoses.some(d => d.code === diagnosis.code)) {
+            showToast('This diagnosis is already added', 'warning');
+            return;
+        }
+        
+        selectedDiagnoses.push(diagnosis);
+        renderDiagnoses();
+        showToast(`Added: ${diagnosis.code}`, 'success');
+        console.log('➕ Added diagnosis:', diagnosis.code);
+    }
+
+    function removeDiagnosis(code) {
+        selectedDiagnoses = selectedDiagnoses.filter(d => d.code !== code);
+        renderDiagnoses();
+        showToast('Diagnosis removed', 'info');
+        console.log('➖ Removed diagnosis:', code);
+    }
+
+    function renderDiagnoses() {
+        const container = document.getElementById('diagnoses-list');
+        
+        if (selectedDiagnoses.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 text-sm">No diagnoses added yet. Use the search above to add ICD-10 codes.</p>';
+            return;
+        }
+        
+        container.innerHTML = selectedDiagnoses.map(d => `
+            <div class="flex items-center justify-between p-4 bg-sky-50 border border-sky-200 rounded-lg">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono font-bold text-sky-700">${d.code}</span>
+                        <span class="text-gray-700">${d.description}</span>
+                        ${d.hcc ? `<span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-700">${d.hcc}</span>` : ''}
+                    </div>
+                </div>
+                <button onclick="window.removeDiagnosis('${d.code}')" class="text-red-500 hover:text-red-700 ml-4">
+                    <i class="ph ph-trash text-xl"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    window.removeDiagnosis = removeDiagnosis;
+
+    function saveDraft() {
+        const visitData = gatherVisitData();
+        console.log('💾 Saving draft...', visitData);
+        showToast('Visit note saved as draft', 'success');
+        // TODO: Save to localStorage
+    }
+
+    async function signNote() {
+        const confirmed = await showConfirm(
+            'Are you sure you want to sign and complete this visit note? This action cannot be undone.',
+            'Sign Visit Note'
+        );
+        
+        if (!confirmed) return;
+        
+        const visitData = gatherVisitData();
+        
+        // Validate required fields
+        if (!visitData.chiefComplaint) {
+            showToast('Please enter a chief complaint', 'error');
+            return;
+        }
+        
+        if (selectedDiagnoses.length === 0) {
+            showToast('Please add at least one diagnosis', 'error');
+            return;
+        }
+        
+        console.log('✍️ Signing visit note...', visitData);
+        
+        // Add to patient's visit history
+        const patient = window.appState.currentPatient;
+        const newVisit = {
+            date: visitData.visitDate,
+            type: visitData.visitType,
+            provider: visitData.provider,
+            chiefComplaint: visitData.chiefComplaint,
+            hpi: visitData.hpi,
+            assessment: selectedDiagnoses.map(d => `${d.code} - ${d.description}`).join('; '),
+            plan: visitData.plan
+        };
+        
+        if (!patient.visits) patient.visits = [];
+        patient.visits.unshift(newVisit);
+        
+        // Add vitals if entered
+        if (visitData.vitals.bp) {
+            if (!patient.vitals) patient.vitals = [];
+            patient.vitals.unshift({
+                date: visitData.visitDate,
+                bp: visitData.vitals.bp,
+                hr: visitData.vitals.hr,
+                temp: visitData.vitals.temp,
+                weight: visitData.vitals.weight,
+                height: visitData.vitals.height,
+                bmi: visitData.vitals.bmi,
+                o2sat: visitData.vitals.o2sat
+            });
+        }
+        
+        showToast('Visit note signed and completed!', 'success');
+        
+        // Navigate back to chart after 1 second
+        setTimeout(() => {
+            window.loadPage('patient-chart');
+        }, 1000);
+    }
+
+    function gatherVisitData() {
+        const rosChecked = Array.from(document.querySelectorAll('.ros-checkbox:checked'))
+            .map(cb => cb.dataset.system);
+        
+        return {
+            visitDate: document.getElementById('visit-date').value,
+            visitType: document.getElementById('visit-type').value,
+            provider: document.getElementById('visit-provider').value,
+            vitals: {
+                bp: document.getElementById('vital-bp').value,
+                hr: document.getElementById('vital-hr').value,
+                temp: document.getElementById('vital-temp').value,
+                weight: document.getElementById('vital-weight').value,
+                height: document.getElementById('vital-height').value,
+                bmi: document.getElementById('vital-bmi').value,
+                o2sat: document.getElementById('vital-o2').value
+            },
+            chiefComplaint: document.getElementById('chief-complaint').value,
+            hpi: document.getElementById('hpi').value,
+            ros: {
+                systems: rosChecked,
+                notes: document.getElementById('ros-notes').value
+            },
+            physicalExam: document.getElementById('physical-exam').value,
+            diagnoses: selectedDiagnoses,
+            plan: document.getElementById('plan').value
+        };
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Auto-initialize
+    if (document.readyState === 'complete') {
+        window.initVisitNote();
+    }
+</script>

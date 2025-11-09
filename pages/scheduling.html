@@ -1,0 +1,610 @@
+<!-- ==================== SCHEDULING / CALENDAR PAGE ==================== -->
+
+<div class="p-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Schedule & Appointments</h1>
+            <p class="text-gray-600 mt-1">Manage patient appointments and availability</p>
+        </div>
+        <button id="new-appointment-btn" class="btn-primary">
+            <i class="ph ph-plus mr-2"></i>
+            New Appointment
+        </button>
+    </div>
+
+    <!-- Calendar Navigation -->
+    <div class="glass p-4 mb-6">
+        <div class="flex items-center justify-between">
+            <button id="prev-month" class="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg">
+                <i class="ph ph-caret-left text-xl"></i>
+            </button>
+            <h2 class="text-xl font-bold text-gray-800" id="calendar-title"></h2>
+            <button id="next-month" class="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg">
+                <i class="ph ph-caret-right text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Calendar -->
+        <div class="lg:col-span-2">
+            <div class="glass p-6">
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Days of week header -->
+                    <div class="day-header">Sun</div>
+                    <div class="day-header">Mon</div>
+                    <div class="day-header">Tue</div>
+                    <div class="day-header">Wed</div>
+                    <div class="day-header">Thu</div>
+                    <div class="day-header">Fri</div>
+                    <div class="day-header">Sat</div>
+                    <!-- Calendar days will be inserted here by renderCalendar() -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Sidebar -->
+        <div class="glass p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4" id="selected-date-title">Today's Appointments</h3>
+            <div id="appointments-list" class="space-y-3">
+                <!-- Appointments will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="glass p-6 mt-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Upcoming Appointments (Next 7 Days)</h3>
+        <div class="overflow-x-auto">
+            <table class="data-table w-full">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="upcoming-appointments-body">
+                    <!-- Appointments will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Appointment Detail Modal -->
+    <div id="appointment-detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">Appointment Details</h3>
+                    <button id="close-appt-detail" class="text-gray-500 hover:text-gray-700">
+                        <i class="ph ph-x text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6 space-y-4" id="appointment-detail-content">
+                <!-- Details will be loaded here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 flex gap-2">
+                <button id="check-in-btn" class="btn-primary">
+                    <i class="ph ph-check-circle mr-2"></i>Check In
+                </button>
+                <button id="edit-appt-btn" class="btn-secondary">
+                    <i class="ph ph-pencil mr-2"></i>Edit
+                </button>
+                <button id="cancel-appt-btn" class="btn-secondary ml-auto text-red-600 hover:bg-red-50">
+                    <i class="ph ph-x-circle mr-2"></i>Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Appointment Modal -->
+    <div id="new-appointment-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">Schedule New Appointment</h3>
+                    <button id="close-new-appt" class="text-gray-500 hover:text-gray-700">
+                        <i class="ph ph-x text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="new-appointment-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Patient</label>
+                    <select id="appt-patient" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                        <option value="">Select patient...</option>
+                        <option value="001">John Smith (MRN002)</option>
+                        <option value="002">Jane Doe (MRN001)</option>
+                        <option value="003">Alice Johnson (MRN003)</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                        <input type="date" id="appt-date" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                        <input type="time" id="appt-time" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Appointment Type</label>
+                    <select id="appt-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                        <option value="">Select type...</option>
+                        <option value="Office Visit">Office Visit</option>
+                        <option value="Annual Wellness Visit">Annual Wellness Visit (AWV)</option>
+                        <option value="Follow-up">Follow-up</option>
+                        <option value="Chronic Care Management">Chronic Care Management</option>
+                        <option value="Telehealth">Telehealth</option>
+                        <option value="Lab Draw">Lab Draw</option>
+                        <option value="Procedure">Procedure</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Visit</label>
+                    <textarea id="appt-reason" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Enter reason for visit..." required></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Duration (minutes)</label>
+                    <select id="appt-duration" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                        <option value="15">15 minutes</option>
+                        <option value="30" selected>30 minutes</option>
+                        <option value="45">45 minutes</option>
+                        <option value="60">60 minutes</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Notes (optional)</label>
+                    <textarea id="appt-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Additional notes..."></textarea>
+                </div>
+                <div class="flex gap-2 pt-4">
+                    <button type="submit" class="btn-primary flex-1">
+                        <i class="ph ph-calendar-plus mr-2"></i>Schedule Appointment
+                    </button>
+                    <button type="button" id="cancel-new-appt" class="btn-secondary flex-1">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+#calendar-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 2px;
+    background: #e5e7eb;
+    border: 1px solid #e5e7eb;
+    width: 100%;
+}
+
+.calendar-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+}
+
+.day-header {
+    background: #f3f4f6;
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    border: 1px solid #d1d5db;
+}
+
+.calendar-day {
+    background: white;
+    min-height: 120px;
+    height: 120px;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-day:hover {
+    background: #f0f9ff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.calendar-day.other-month {
+    background: #fafafa;
+    color: #9ca3af;
+}
+
+.calendar-day.today {
+    background: #dbeafe;
+    border: 2px solid #0ea5e9;
+    font-weight: bold;
+}
+
+.calendar-day.selected {
+    background: #bfdbfe;
+    border: 2px solid #0284c7;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+.day-number {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.calendar-day.other-month .day-number {
+    color: #9ca3af;
+}
+
+.appointment-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    display: inline-block;
+    margin-right: 2px;
+}
+
+.appointment-count {
+    margin-top: auto;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+</style>
+
+<script type="module">
+    import { showToast } from '../js/ui-components.js';
+
+    console.log('📅 Initializing scheduling page...');
+
+    let currentDate = new Date();
+    let selectedDate = new Date();
+
+    // Comprehensive appointments data (30+ appointments spanning 4 weeks)
+    const appointments = [
+        // ===== WEEK 1: Nov 9-15, 2025 =====
+        // Saturday Nov 9 (Today)
+        { id: 1, date: '2025-11-09', time: '09:00 AM', patient: 'Jane Doe', mrn: 'MRN001', type: 'Follow-up', reason: 'Diabetes/CKD management', status: 'Scheduled', flags: ['Diabetic', 'CKD', 'Overdue Mammogram'] },
+        { id: 2, date: '2025-11-09', time: '10:00 AM', patient: 'John Smith', mrn: 'MRN002', type: 'Annual Wellness Visit', reason: 'Medicare AWV', status: 'Confirmed', flags: ['CHF', 'A-Fib', 'Depression'] },
+        { id: 3, date: '2025-11-09', time: '02:00 PM', patient: 'Alice Johnson', mrn: 'MRN003', type: 'Physical Therapy', reason: 'Prosthetic gait training', status: 'In Progress', flags: ['Recent BKA', 'High Fall Risk'] },
+        
+        // Sunday Nov 10
+        { id: 4, date: '2025-11-10', time: '09:30 AM', patient: 'Jane Doe', mrn: 'MRN001', type: 'Lab Review', reason: 'eGFR follow-up', status: 'Scheduled', flags: ['CKD Stage 3', 'High K+'] },
+        { id: 5, date: '2025-11-10', time: '11:00 AM', patient: 'Robert Brown', mrn: 'MRN004', type: 'New Patient', reason: 'Establish care', status: 'Confirmed', flags: [] },
+        
+        // Monday Nov 11
+        { id: 6, date: '2025-11-11', time: '08:00 AM', patient: 'Mary Wilson', mrn: 'MRN005', type: 'Follow-up', reason: 'HTN check', status: 'Scheduled', flags: ['HTN', 'Hyperlipidemia'] },
+        { id: 7, date: '2025-11-11', time: '09:00 AM', patient: 'John Smith', mrn: 'MRN002', type: 'Cardiology Follow-up', reason: 'CHF management, echo review', status: 'Confirmed', flags: ['CHF', 'EF 35%'] },
+        { id: 8, date: '2025-11-11', time: '10:30 AM', patient: 'Alice Johnson', mrn: 'MRN003', type: 'Behavioral Health', reason: 'Depression follow-up (PHQ-9:12)', status: 'Scheduled', flags: ['Moderate Depression'] },
+        { id: 9, date: '2025-11-11', time: '02:00 PM', patient: 'James Miller', mrn: 'MRN006', type: 'Sick Visit', reason: 'URI symptoms', status: 'Scheduled', flags: [] },
+        
+        // Tuesday Nov 12
+        { id: 10, date: '2025-11-12', time: '09:00 AM', patient: 'Jane Doe', mrn: 'MRN001', type: 'Ophthalmology Referral', reason: 'Diabetic retinopathy screening', status: 'Scheduled', flags: ['Diabetic'] },
+        { id: 11, date: '2025-11-12', time: '11:00 AM', patient: 'Patricia Davis', mrn: 'MRN007', type: 'Pre-Operative Evaluation', reason: 'Knee replacement clearance', status: 'Confirmed', flags: ['Osteoarthritis'] },
+        { id: 12, date: '2025-11-12', time: '02:00 PM', patient: 'Alice Johnson', mrn: 'MRN003', type: 'Physical Therapy', reason: 'Prosthetic gait training (recurring)', status: 'Scheduled', flags: ['Post-BKA'] },
+        { id: 13, date: '2025-11-12', time: '03:30 PM', patient: 'Michael Garcia', mrn: 'MRN008', type: 'Follow-up', reason: 'Post-MI management', status: 'Scheduled', flags: ['CAD', 'S/P STEMI'] },
+        
+        // Wednesday Nov 13
+        { id: 14, date: '2025-11-13', time: '08:00 AM', patient: 'Jane Doe', mrn: 'MRN001', type: 'Nephrology Consultation', reason: 'CKD Stage 3 progression', status: 'Confirmed', flags: ['eGFR 48', 'Declining'] },
+        { id: 15, date: '2025-11-13', time: '10:00 AM', patient: 'Sarah Martinez', mrn: 'MRN009', type: 'Annual Physical', reason: 'Preventive care', status: 'Scheduled', flags: [] },
+        { id: 16, date: '2025-11-13', time: '01:00 PM', patient: 'John Smith', mrn: 'MRN002', type: 'Pulmonology Follow-up', reason: 'COPD management', status: 'Scheduled', flags: ['COPD', 'O2 dependent'] },
+        { id: 17, date: '2025-11-13', time: '03:00 PM', patient: 'David Lee', mrn: 'MRN010', type: 'Telehealth', reason: 'Medication review', status: 'Confirmed', flags: [] },
+        
+        // Thursday Nov 14
+        { id: 18, date: '2025-11-14', time: '09:00 AM', patient: 'Alice Johnson', mrn: 'MRN003', type: 'Physical Therapy', reason: 'Prosthetic gait training (recurring)', status: 'Scheduled', flags: ['Week 12 post-op'] },
+        { id: 19, date: '2025-11-14', time: '10:30 AM', patient: 'Jennifer White', mrn: 'MRN011', type: 'Follow-up', reason: 'Thyroid disorder', status: 'Scheduled', flags: ['Hypothyroidism'] },
+        { id: 20, date: '2025-11-14', time: '01:00 PM', patient: 'John Smith', mrn: 'MRN002', type: 'Lab Draw', reason: 'BNP, CMP, CBC', status: 'Confirmed', flags: ['CHF monitoring'] },
+        { id: 21, date: '2025-11-14', time: '02:30 PM', patient: 'Thomas Anderson', mrn: 'MRN012', type: 'Sick Visit', reason: 'Back pain', status: 'Scheduled', flags: [] },
+        
+        // Friday Nov 15
+        { id: 22, date: '2025-11-15', time: '08:30 AM', patient: 'Jane Doe', mrn: 'MRN001', type: 'Mammogram', reason: 'Overdue screening (family hx)', status: 'Confirmed', flags: ['Sister breast CA'] },
+        { id: 23, date: '2025-11-15', time: '10:00 AM', patient: 'Linda Taylor', mrn: 'MRN013', type: 'Follow-up', reason: 'Asthma control', status: 'Scheduled', flags: ['Asthma'] },
+        { id: 24, date: '2025-11-15', time: '02:00 PM', patient: 'Alice Johnson', mrn: 'MRN003', type: 'Wound Check', reason: 'BKA stump assessment', status: 'Scheduled', flags: ['Monitor healing'] },
+        
+        // ===== WEEK 2: Nov 16-22, 2025 =====
+        // Monday Nov 18
+        { id: 25, date: '2025-11-18', time: '09:00 AM', patient: 'John Smith', mrn: 'MRN002', type: 'Follow-up', reason: 'CHF stability check', status: 'Scheduled', flags: ['CHF', 'Recent adjustment'] },
+        { id: 26, date: '2025-11-18', time: '11:00 AM', patient: 'Robert Johnson', mrn: 'MRN014', type: 'Annual Wellness Visit', reason: 'Medicare AWV', status: 'Scheduled', flags: [] },
+        { id: 27, date: '2025-11-18', time: '02:00 PM', patient: 'Alice Johnson', mrn: 'MRN003', type: 'Physical Therapy', reason: 'Prosthetic gait training (recurring)', status: 'Scheduled', flags: ['Week 13 post-op'] },
+        
+        // Tuesday Nov 19
+        { id: 28, date: '2025-11-19', time: '08:00 AM', patient: 'Jane Doe', mrn: 'MRN001', type: 'Follow-up', reason: 'Nephrology consult review', status: 'Scheduled', flags: ['CKD management'] },
+        { id: 29, date: '2025-11-19', time: '10:00 AM', patient: 'Barbara Martinez', mrn: 'MRN015', type: 'Telehealth', reason: 'Depression screening', status: 'Confirmed', flags: [] },
+        { id: 30, date: '2025-11-19', time: '01:00 PM', patient: 'Charles Brown', mrn: 'MRN016', type: 'Follow-up', reason: 'A-Fib management', status: 'Scheduled', flags: ['A-Fib', 'On Eliquis'] },
+        
+        // Wednesday Nov 20
+        { id: 31, date: '2025-11-20', time: '09:00 AM', patient: 'Alice Johnson', mrn: 'MRN003', type: 'Psychiatry Consultation', reason: 'Medication adjustment (Sertraline)', status: 'Scheduled', flags: ['PHQ-9: 12'] },
+        { id: 32, date: '2025-11-20', time: '11:00 AM', patient: 'Margaret Wilson', mrn: 'MRN017', type: 'Sick Visit', reason: 'Dizziness', status: 'Scheduled', flags: [] },
+        { id: 33, date: '2025-11-20', time: '02:00 PM', patient: 'John Smith', mrn: 'MRN002', type: 'Echocardiogram', reason: '6-month f/u for EF', status: 'Confirmed', flags: ['CHF', 'Last EF 35%'] },
+        
+        // Thursday Nov 21
+        { id: 34, date: '2025-11-21', time: '10:00 AM', patient: 'Alice Johnson', mrn: 'MRN003', type: 'Physical Therapy', reason: 'Prosthetic gait training (recurring)', status: 'Scheduled', flags: ['Week 13 post-op'] },
+        { id: 35, date: '2025-11-21', time: '01:00 PM', patient: 'Daniel Robinson', mrn: 'MRN018', type: 'New Patient', reason: 'Establish care - T2DM', status: 'Confirmed', flags: ['Diabetic', 'No PCP'] },
+        
+        // Friday Nov 22
+        { id: 36, date: '2025-11-22', time: '09:00 AM', patient: 'Jane Doe', mrn: 'MRN001', type: 'Lab Review', reason: 'Post-nephrology labs', status: 'Scheduled', flags: ['Repeat eGFR'] },
+        { id: 37, date: '2025-11-22', time: '11:00 AM', patient: 'Susan Clark', mrn: 'MRN019', type: 'Follow-up', reason: 'Osteoporosis management', status: 'Scheduled', flags: ['Osteoporosis', 'On Fosamax'] }
+    ];
+
+    window.initScheduling = function() {
+        console.log('📄 Scheduling page loaded');
+        
+        renderCalendar();
+        loadAppointmentsForDate(selectedDate);
+        loadUpcomingAppointments();
+        
+        // Setup navigation
+        document.getElementById('prev-month').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+        
+        document.getElementById('next-month').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+        
+        document.getElementById('new-appointment-btn').addEventListener('click', () => {
+            showToast('New appointment scheduling coming soon!', 'info');
+        });
+    };
+
+    function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        
+        // Update title
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+        document.getElementById('calendar-title').textContent = `${monthNames[month]} ${year}`;
+        
+        // Calculate calendar days
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysInPrevMonth = new Date(year, month, 0).getDate();
+        
+        // Get the calendar grid and remove existing day cells (keep headers)
+        const calendarGrid = document.getElementById('calendar-grid');
+        const existingDays = calendarGrid.querySelectorAll('.calendar-day');
+        existingDays.forEach(day => day.remove());
+        
+        let calendarHTML = '';
+        
+        // Previous month days
+        for (let i = firstDay - 1; i >= 0; i--) {
+            const day = daysInPrevMonth - i;
+            calendarHTML += `<div class="calendar-day other-month"><div class="day-number">${day}</div></div>`;
+        }
+        
+        // Current month days
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const dateStr = formatDateForComparison(date);
+            const dayAppointments = appointments.filter(a => a.date === dateStr);
+            const isToday = isDateToday(date);
+            const isSelected = isSameDay(date, selectedDate);
+            
+            let classes = 'calendar-day';
+            if (isToday) classes += ' today';
+            if (isSelected) classes += ' selected';
+            
+            calendarHTML += `
+                <div class="${classes}" onclick="window.selectCalendarDate('${dateStr}')">
+                    <div class="day-number">${day}</div>
+                    ${dayAppointments.length > 0 ? `
+                        <div class="appointment-count">
+                            ${dayAppointments.slice(0, 3).map(() => '<span class="appointment-dot"></span>').join('')}
+                            ${dayAppointments.length > 3 ? `<span class="appointment-dot"></span>` : ''}
+                            <span class="ml-1 font-semibold">${dayAppointments.length} appt${dayAppointments.length > 1 ? 's' : ''}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        // Next month days
+        const totalCells = firstDay + daysInMonth;
+        const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+        for (let day = 1; day <= remainingCells; day++) {
+            calendarHTML += `<div class="calendar-day other-month"><div class="day-number">${day}</div></div>`;
+        }
+        
+        // Append all day cells after the headers
+        calendarGrid.insertAdjacentHTML('beforeend', calendarHTML);
+    }
+
+    window.selectCalendarDate = function(dateStr) {
+        selectedDate = new Date(dateStr + 'T00:00:00');
+        renderCalendar();
+        loadAppointmentsForDate(selectedDate);
+    };
+
+    function loadAppointmentsForDate(date) {
+        const dateStr = formatDateForComparison(date);
+        const dayAppointments = appointments.filter(a => a.date === dateStr);
+        
+        const title = isDateToday(date) ? "Today's Appointments" : 
+                      `Appointments for ${formatDateDisplay(date)}`;
+        document.getElementById('selected-date-title').textContent = title;
+        
+        const container = document.getElementById('appointments-list');
+        
+        if (dayAppointments.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 text-sm">No appointments scheduled</p>';
+            return;
+        }
+        
+        const getStatusBadge = (status) => {
+            const badges = {
+                'Scheduled': 'bg-blue-100 text-blue-700',
+                'Confirmed': 'bg-green-100 text-green-700',
+                'In Progress': 'bg-yellow-100 text-yellow-700',
+                'Completed': 'bg-gray-100 text-gray-700',
+                'No-show': 'bg-red-100 text-red-700',
+                'Cancelled': 'bg-gray-100 text-gray-500'
+            };
+            return badges[status] || badges['Scheduled'];
+        };
+        
+        container.innerHTML = dayAppointments.map(apt => `
+            <div class="p-4 bg-sky-50 border border-sky-200 rounded-lg hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="font-bold text-sky-700">${apt.time}</div>
+                    <span class="px-2 py-1 text-xs rounded-full ${getStatusBadge(apt.status)}">${apt.status}</span>
+                </div>
+                <div class="font-medium text-gray-800">${apt.patient}</div>
+                <div class="text-xs text-gray-500 mb-1">MRN: ${apt.mrn}</div>
+                <div class="text-sm font-medium text-gray-700">${apt.type}</div>
+                <div class="text-xs text-gray-600 mt-1">${apt.reason}</div>
+                
+                ${apt.flags && apt.flags.length > 0 ? `
+                    <div class="flex flex-wrap gap-1 mt-2">
+                        ${apt.flags.map(flag => {
+                            const isCritical = flag.includes('High') || flag.includes('Overdue') || flag.includes('Depression') || flag.includes('Fall Risk');
+                            const badgeColor = isCritical ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700';
+                            return `<span class="px-2 py-0.5 text-xs rounded-full ${badgeColor}">⚠ ${flag}</span>`;
+                        }).join('')}
+                    </div>
+                ` : ''}
+                
+                <div class="flex gap-2 mt-3">
+                    <button onclick="window.checkInPatient('${apt.mrn}')" class="text-xs px-3 py-1 bg-sky-500 text-white rounded hover:bg-sky-600">
+                        <i class="ph ph-check-circle mr-1"></i>Check In
+                    </button>
+                    <button onclick="window.openChart('${apt.mrn}')" class="text-xs px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+                        <i class="ph ph-folder-open mr-1"></i>Chart
+                    </button>
+                    <button class="text-xs px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                        <i class="ph ph-pencil-simple mr-1"></i>Edit
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function loadUpcomingAppointments() {
+        const today = new Date();
+        const nextWeek = new Date();
+        nextWeek.setDate(today.getDate() + 7);
+        
+        const upcoming = appointments.filter(apt => {
+            const aptDate = new Date(apt.date);
+            return aptDate >= today && aptDate <= nextWeek;
+        }).sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        const tbody = document.getElementById('upcoming-appointments-body');
+        
+        if (upcoming.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-gray-500">No upcoming appointments</td></tr>';
+            return;
+        }
+        
+        const getStatusBadge = (status) => {
+            const badges = {
+                'Scheduled': 'bg-blue-100 text-blue-700',
+                'Confirmed': 'bg-green-100 text-green-700',
+                'In Progress': 'bg-yellow-100 text-yellow-700',
+                'Completed': 'bg-gray-100 text-gray-700',
+                'No-show': 'bg-red-100 text-red-700',
+                'Cancelled': 'bg-gray-100 text-gray-500'
+            };
+            return badges[status] || badges['Scheduled'];
+        };
+        
+        tbody.innerHTML = upcoming.map(apt => `
+            <tr class="hover:bg-sky-50 transition-colors">
+                <td>${formatDateDisplay(new Date(apt.date))}</td>
+                <td class="font-medium">${apt.time}</td>
+                <td>
+                    <div class="font-medium">${apt.patient}</div>
+                    <div class="text-xs text-gray-500">MRN: ${apt.mrn}</div>
+                    ${apt.flags && apt.flags.length > 0 ? `
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            ${apt.flags.slice(0, 2).map(flag => {
+                                const isCritical = flag.includes('High') || flag.includes('Overdue') || flag.includes('Depression');
+                                return `<span class="px-1.5 py-0.5 text-xs rounded ${isCritical ? 'bg-red-100 text-red-600' : 'bg-purple-100 text-purple-600'}">${flag}</span>`;
+                            }).join('')}
+                            ${apt.flags.length > 2 ? `<span class="text-xs text-gray-500">+${apt.flags.length - 2}</span>` : ''}
+                        </div>
+                    ` : ''}
+                </td>
+                <td>
+                    <div class="font-medium text-sm">${apt.type}</div>
+                    <div class="text-xs text-gray-600">${apt.reason}</div>
+                </td>
+                <td><span class="px-2 py-1 text-xs rounded-full ${getStatusBadge(apt.status)}">${apt.status}</span></td>
+                <td>
+                    <div class="flex gap-1">
+                        <button onclick="window.openChart('${apt.mrn}')" class="text-sky-500 hover:text-sky-700 text-sm" title="Open Chart">
+                            <i class="ph ph-folder-open"></i>
+                        </button>
+                        <button class="text-blue-500 hover:text-blue-700 text-sm" title="Edit">
+                            <i class="ph ph-pencil-simple"></i>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700 text-sm" title="Cancel">
+                            <i class="ph ph-x-circle"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+    
+    window.checkInPatient = function(mrn) {
+        import('../js/ui-components.js').then(({ showToast }) => {
+            showToast(`Checking in patient ${mrn}...`, 'success');
+        });
+    };
+    
+    window.openChart = function(mrn) {
+        // Find patient by MRN and open their chart
+        import('../data/patients.js').then(({ patients }) => {
+            const patient = patients.find(p => p.mrn === mrn);
+            if (patient) {
+                window.appState.currentPatient = patient;
+                window.loadPage('patient-chart');
+            }
+        });
+    };
+
+    function formatDateForComparison(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatDateDisplay(date) {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function isDateToday(date) {
+        const today = new Date();
+        return date.getDate() === today.getDate() &&
+               date.getMonth() === today.getMonth() &&
+               date.getFullYear() === today.getFullYear();
+    }
+
+    function isSameDay(date1, date2) {
+        return date1.getDate() === date2.getDate() &&
+               date1.getMonth() === date2.getMonth() &&
+               date1.getFullYear() === date2.getFullYear();
+    }
+
+    // Auto-initialize
+    if (document.readyState === 'complete') {
+        window.initScheduling();
+    }
+</script>
