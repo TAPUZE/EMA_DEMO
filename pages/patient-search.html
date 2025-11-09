@@ -99,10 +99,22 @@
         const dataManager = await import('../js/data-manager.js').then(m => m.default);
         const runtimePatients = dataManager.getAllPatients();
         
+        console.log('🔍 Runtime patients from dataManager:', runtimePatients);
+        console.log('📊 Demo patients count:', patients.length);
+        
+        // Check localStorage directly
+        const stored = localStorage.getItem('emr_runtime_data');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            console.log('💾 localStorage contains:', parsed);
+        } else {
+            console.log('⚠️ No data in localStorage - this is normal on first load');
+        }
+        
         // Combine runtime (new) with static (demo) patients
         const allPatients = [...runtimePatients, ...patients];
         
-        console.log(`👥 Loaded ${allPatients.length} patients (${runtimePatients.length} new + ${patients.length} demo)`);
+        console.log(`👥 Total patients: ${allPatients.length} (${runtimePatients.length} from localStorage + ${patients.length} demo)`);
         
         // Store combined list for filtering
         window.allPatientsList = allPatients;
