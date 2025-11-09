@@ -1148,6 +1148,1254 @@
                         </div>
                     </div>
                 `;
+
+            // NEW VISIT TYPES - Hypertension Management
+            case 'homeBPLog':
+            case 'bpTracking':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Blood Pressure Tracking</h4>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Home BP Average</label>
+                                <input type="text" placeholder="120/80" class="form-input" data-section="${section}" data-field="average">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Frequency</label>
+                                <select class="form-input" data-section="${section}" data-field="frequency">
+                                    <option value="">Select...</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="rarely">Rarely</option>
+                                    <option value="never">Not monitoring</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Target BP</label>
+                                <input type="text" placeholder="<130/80" class="form-input" data-section="${section}" data-field="target">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">BP Trends/Notes</label>
+                            <textarea rows="2" placeholder="High in AM, better in evening..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="notes"></textarea>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <i class="ph ph-file-arrow-up text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600 mb-2">Upload BP Log</p>
+                            <input type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx" class="hidden" id="bp-upload" data-section="${section}">
+                            <button onclick="document.getElementById('bp-upload').click()" class="btn-secondary btn-sm">
+                                <i class="ph ph-upload-simple mr-2"></i>Choose File
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            case 'lifestyleAssessment':
+            case 'lifestyleModifications':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Sodium Intake</label>
+                                <select class="form-input" data-section="${section}" data-field="sodium">
+                                    <option value="">Select...</option>
+                                    <option value="low">Low sodium diet</option>
+                                    <option value="moderate">Moderate</option>
+                                    <option value="high">High sodium intake</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Exercise Frequency</label>
+                                <select class="form-input" data-section="${section}" data-field="exercise">
+                                    <option value="">Select...</option>
+                                    <option value="daily">Daily (30+ min)</option>
+                                    <option value="weekly">3-5x per week</option>
+                                    <option value="occasional">Occasional</option>
+                                    <option value="sedentary">Sedentary</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Alcohol Use</label>
+                                <input type="number" placeholder="drinks/week" class="form-input" data-section="${section}" data-field="alcohol">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Smoking Status</label>
+                                <select class="form-input" data-section="${section}" data-field="smoking">
+                                    <option value="">Select...</option>
+                                    <option value="never">Never</option>
+                                    <option value="former">Former smoker</option>
+                                    <option value="current">Current smoker</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Lifestyle Counseling Provided</label>
+                            <textarea rows="2" placeholder="DASH diet, exercise recommendations, stress management..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="counseling"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'targetOrganDamage':
+            case 'targetOrganAssessment':
+                return `
+                    <div class="space-y-3">
+                        <div class="bg-orange-50 p-3 rounded">
+                            <h4 class="font-semibold text-sm mb-2">Target Organ Assessment</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" value="heart" data-section="${section}">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Heart - LVH, CHF</div>
+                                        <input type="text" placeholder="Assessment notes..." class="form-input text-sm mt-1" data-field="heart_notes">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" value="kidneys" data-section="${section}">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Kidneys - CKD, proteinuria</div>
+                                        <input type="text" placeholder="eGFR, urine albumin..." class="form-input text-sm mt-1" data-field="kidney_notes">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" value="eyes" data-section="${section}">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Eyes - Retinopathy</div>
+                                        <input type="text" placeholder="Last eye exam, findings..." class="form-input text-sm mt-1" data-field="eye_notes">
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-2">
+                                    <input type="checkbox" class="mt-1" value="brain" data-section="${section}">
+                                    <div class="flex-grow">
+                                        <div class="font-medium">Brain - Stroke, TIA, dementia</div>
+                                        <input type="text" placeholder="Neuro assessment..." class="form-input text-sm mt-1" data-field="neuro_notes">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            // COPD/Respiratory
+            case 'respiratoryAssessment':
+            case 'symptomsReview':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Dyspnea Scale (mMRC)</label>
+                                <select class="form-input" data-section="${section}" data-field="dyspnea">
+                                    <option value="">Select...</option>
+                                    <option value="0">0 - Only with strenuous exercise</option>
+                                    <option value="1">1 - Short of breath when hurrying</option>
+                                    <option value="2">2 - Walk slower than peers</option>
+                                    <option value="3">3 - Stop after 100 yards or few minutes</option>
+                                    <option value="4">4 - Too breathless to leave house</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Cough</label>
+                                <select class="form-input" data-section="${section}" data-field="cough">
+                                    <option value="">Select...</option>
+                                    <option value="none">None</option>
+                                    <option value="dry">Dry cough</option>
+                                    <option value="productive">Productive</option>
+                                    <option value="chronic">Chronic cough</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Sputum Production</label>
+                            <input type="text" placeholder="Color, amount, frequency..." class="form-input" data-section="${section}" data-field="sputum">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Wheezing/Chest Tightness</label>
+                            <textarea rows="2" placeholder="Frequency, triggers..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="wheezing"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'inhalerTechnique':
+            case 'inhalerReview':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Inhaler Use Assessment</h4>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Current Inhalers</label>
+                            <textarea rows="2" placeholder="Albuterol MDI, Advair Diskus 250/50..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="list"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Technique Demonstration</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="shake" data-section="${section}"> Shakes inhaler before use</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="exhale" data-section="${section}"> Exhales completely first</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="seal" data-section="${section}"> Creates good seal with lips</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="inhale" data-section="${section}"> Slow deep inhalation</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="hold" data-section="${section}"> Holds breath 5-10 seconds</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="spacer" data-section="${section}"> Uses spacer correctly</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Rescue Inhaler Use Frequency</label>
+                            <select class="form-input" data-section="${section}" data-field="rescue_frequency">
+                                <option value="">Select...</option>
+                                <option value="rare">Rarely (< 2x/week)</option>
+                                <option value="weekly">2-4x per week</option>
+                                <option value="daily">Daily use</option>
+                                <option value="multiple">Multiple times daily</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+
+            case 'exacerbationHistory':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Exacerbations (past year)</label>
+                                <input type="number" placeholder="Number of episodes" class="form-input" data-section="${section}" data-field="count">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Last Exacerbation</label>
+                                <input type="date" class="form-input" data-section="${section}" data-field="last_date">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">ED Visits (past year)</label>
+                                <input type="number" placeholder="0" class="form-input" data-section="${section}" data-field="ed_visits">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Hospitalizations</label>
+                                <input type="number" placeholder="0" class="form-input" data-section="${section}" data-field="hospitalizations">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Triggers/Causes</label>
+                            <textarea rows="2" placeholder="Upper respiratory infections, allergen exposure, weather changes..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="triggers"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'oxygenAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Room Air O2 Sat</label>
+                                <input type="number" placeholder="95%" class="form-input" data-section="${section}" data-field="room_air">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">On Oxygen</label>
+                                <div class="flex gap-4 items-center mt-2">
+                                    <label class="flex items-center"><input type="radio" name="on-oxygen" value="yes" class="mr-2" data-section="${section}"> Yes</label>
+                                    <label class="flex items-center"><input type="radio" name="on-oxygen" value="no" class="mr-2" data-section="${section}"> No</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">O2 Flow Rate</label>
+                                <input type="text" placeholder="2L NC" class="form-input" data-section="${section}" data-field="flow_rate">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Home O2 Use Pattern</label>
+                            <select class="form-input" data-section="${section}" data-field="use_pattern">
+                                <option value="">Select...</option>
+                                <option value="continuous">Continuous</option>
+                                <option value="exertion">With exertion only</option>
+                                <option value="sleep">Sleep only</option>
+                                <option value="prn">PRN</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+
+            // Anticoagulation
+            case 'inrReview':
+            case 'inrResult':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-yellow-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">INR Management</h4>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Current INR</label>
+                                <input type="number" step="0.1" placeholder="2.5" class="form-input" data-section="${section}" data-field="current_inr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Target Range</label>
+                                <input type="text" placeholder="2.0-3.0" class="form-input" data-section="${section}" data-field="target_range">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">INR Date</label>
+                                <input type="date" class="form-input" data-section="${section}" data-field="inr_date">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Indication for Anticoagulation</label>
+                            <select class="form-input" data-section="${section}" data-field="indication">
+                                <option value="">Select...</option>
+                                <option value="afib">Atrial Fibrillation</option>
+                                <option value="dvt">DVT/PE</option>
+                                <option value="valve">Mechanical Valve</option>
+                                <option value="stroke">Stroke Prevention</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <i class="ph ph-file-arrow-up text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600 mb-2">Upload INR Result</p>
+                            <input type="file" accept=".pdf,.jpg,.jpeg,.png" class="hidden" id="inr-upload" data-section="${section}">
+                            <button onclick="document.getElementById('inr-upload').click()" class="btn-secondary btn-sm">
+                                <i class="ph ph-upload-simple mr-2"></i>Choose File
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            case 'bleedingAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Signs of Bleeding (check all that apply)</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="none" data-section="${section}"> None</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="bruising" data-section="${section}"> Easy bruising</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="gums" data-section="${section}"> Bleeding gums</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="nosebleeds" data-section="${section}"> Nosebleeds</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="gi" data-section="${section}"> GI bleeding (dark stools, blood)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="urine" data-section="${section}"> Blood in urine</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="major" data-section="${section}"> Major bleeding event</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Bleeding Details</label>
+                            <textarea rows="2" placeholder="Describe any bleeding episodes..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="details"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'dietaryReview':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Vitamin K Intake Consistency</label>
+                            <select class="form-input" data-section="${section}" data-field="consistency">
+                                <option value="">Select...</option>
+                                <option value="consistent">Consistent - stable intake</option>
+                                <option value="variable">Variable - fluctuating intake</option>
+                                <option value="high">High vitamin K foods frequently</option>
+                                <option value="avoiding">Avoiding vitamin K foods</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">High Vitamin K Foods Consumed</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="greens" data-section="${section}"> Leafy greens (kale, spinach, collards)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="broccoli" data-section="${section}"> Broccoli, Brussels sprouts</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="cabbage" data-section="${section}"> Cabbage</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="supplements" data-section="${section}"> Vitamin K supplements</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Dietary Counseling</label>
+                            <textarea rows="2" placeholder="Importance of consistent vitamin K intake, not avoidance..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="counseling"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            // Depression/Mental Health
+            case 'phq9Score':
+            case 'phq9Assessment':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">PHQ-9 Depression Screening</h4>
+                            <p class="text-xs text-gray-600 mt-1">Score each item: 0=Not at all, 1=Several days, 2=More than half the days, 3=Nearly every day</p>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">1. Little interest or pleasure in doing things</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q1">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">2. Feeling down, depressed, or hopeless</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q2">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">3. Trouble falling/staying asleep, sleeping too much</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q3">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">4. Feeling tired or having little energy</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q4">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">5. Poor appetite or overeating</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q5">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">6. Feeling bad about yourself or that you're a failure</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q6">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">7. Trouble concentrating on things</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q7">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">8. Moving/speaking slowly or being fidgety/restless</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q8">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-8">9. Thoughts of self-harm or death</div>
+                                <select class="col-span-4 form-input text-sm" data-section="${section}" data-field="q9">
+                                    <option value="">-</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded">
+                            <strong>Total PHQ-9 Score:</strong> <span id="phq9-total">0</span>/27
+                            <p class="text-xs mt-1">1-4: Minimal | 5-9: Mild | 10-14: Moderate | 15-19: Moderately Severe | 20-27: Severe</p>
+                        </div>
+                    </div>
+                `;
+
+            case 'suicideRisk':
+            case 'suicideRiskAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-red-100 border-2 border-red-400 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm text-red-800">Suicide Risk Assessment - REQUIRED</h4>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Suicidal Ideation</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="radio" name="si" value="none" class="mr-2" data-section="${section}"> No suicidal thoughts</label>
+                                <label class="flex items-center"><input type="radio" name="si" value="passive" class="mr-2" data-section="${section}"> Passive (wish to be dead)</label>
+                                <label class="flex items-center"><input type="radio" name="si" value="active" class="mr-2" data-section="${section}"> Active ideation</label>
+                                <label class="flex items-center"><input type="radio" name="si" value="plan" class="mr-2" data-section="${section}"> Plan or intent</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Protective Factors</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="family" data-section="${section}"> Family support</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="religious" data-section="${section}"> Religious beliefs</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="future" data-section="${section}"> Future plans/goals</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="treatment" data-section="${section}"> Engaged in treatment</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Risk Level</label>
+                            <select class="form-input" data-section="${section}" data-field="risk_level">
+                                <option value="">Select...</option>
+                                <option value="low">Low risk</option>
+                                <option value="moderate">Moderate risk</option>
+                                <option value="high">High risk - immediate intervention needed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Safety Plan/Intervention</label>
+                            <textarea rows="3" placeholder="Crisis hotline provided, family notified, safety plan reviewed..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="intervention"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'functionalImpact':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Impact on Daily Functioning</label>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-sm font-medium">Work/School</label>
+                                    <select class="form-input" data-section="${section}" data-field="work">
+                                        <option value="">Select...</option>
+                                        <option value="none">No impairment</option>
+                                        <option value="mild">Mild difficulty</option>
+                                        <option value="moderate">Moderate difficulty</option>
+                                        <option value="severe">Severe impairment/unable to work</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium">Relationships</label>
+                                    <select class="form-input" data-section="${section}" data-field="relationships">
+                                        <option value="">Select...</option>
+                                        <option value="none">No impairment</option>
+                                        <option value="mild">Mild difficulty</option>
+                                        <option value="moderate">Moderate difficulty</option>
+                                        <option value="severe">Severe impairment/isolation</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium">Self-Care/ADLs</label>
+                                    <select class="form-input" data-section="${section}" data-field="selfcare">
+                                        <option value="">Select...</option>
+                                        <option value="none">No impairment</option>
+                                        <option value="mild">Mild difficulty</option>
+                                        <option value="moderate">Moderate difficulty</option>
+                                        <option value="severe">Severe impairment/neglect</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            case 'substanceUse':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Tobacco Use</label>
+                                <select class="form-input" data-section="${section}" data-field="tobacco">
+                                    <option value="">Select...</option>
+                                    <option value="never">Never</option>
+                                    <option value="former">Former smoker</option>
+                                    <option value="current">Current smoker</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Alcohol (drinks/week)</label>
+                                <input type="number" placeholder="0" class="form-input" data-section="${section}" data-field="alcohol">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Drug Use (check all that apply)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="none" data-section="${section}"> None</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="marijuana" data-section="${section}"> Marijuana</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="opioids" data-section="${section}"> Opioids (non-prescribed)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="cocaine" data-section="${section}"> Cocaine</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="amphetamines" data-section="${section}"> Amphetamines</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="benzodiazepines" data-section="${section}"> Benzodiazepines (non-prescribed)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Substance Use Impact</label>
+                            <textarea rows="2" placeholder="Impact on health, relationships, work..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="impact"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'safetyPlan':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-green-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Safety Planning</h4>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Warning Signs Identified</label>
+                            <textarea rows="2" placeholder="Specific thoughts, emotions, behaviors that precede crisis..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="warning_signs"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Coping Strategies</label>
+                            <textarea rows="2" placeholder="Internal coping skills patient can use..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="coping"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">People/Places for Support</label>
+                            <textarea rows="2" placeholder="Family members, friends, safe places..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="support"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Emergency Contacts</label>
+                            <div class="bg-blue-50 p-3 rounded text-sm">
+                                <div><strong>988 Suicide & Crisis Lifeline:</strong> 988</div>
+                                <div><strong>Crisis Text Line:</strong> Text HOME to 741741</div>
+                                <div><strong>Veterans Crisis Line:</strong> 1-800-273-8255 (Press 1)</div>
+                                <div><strong>Local Crisis Team:</strong> <input type="text" placeholder="Enter local number" class="form-input text-sm inline-block w-48 ml-2" data-section="${section}" data-field="local_crisis"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            // Asthma Management
+            case 'asthmaControlTest':
+            case 'asthmaControl':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-cyan-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Asthma Control Test (ACT)</h4>
+                            <p class="text-xs text-gray-600">Score: 25=complete control, 20-24=well controlled, <20=not well controlled</p>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <label>1. In the past 4 weeks, how much of the time did asthma keep you from getting as much done?</label>
+                                <select class="form-input" data-section="${section}" data-field="q1">
+                                    <option value="">-</option>
+                                    <option value="5">All the time (1)</option>
+                                    <option value="4">Most of the time (2)</option>
+                                    <option value="3">Some of the time (3)</option>
+                                    <option value="2">A little of the time (4)</option>
+                                    <option value="1">None of the time (5)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>2. How often have you had shortness of breath?</label>
+                                <select class="form-input" data-section="${section}" data-field="q2">
+                                    <option value="">-</option>
+                                    <option value="1">More than once a day (1)</option>
+                                    <option value="2">Once a day (2)</option>
+                                    <option value="3">3 to 6 times a week (3)</option>
+                                    <option value="4">Once or twice a week (4)</option>
+                                    <option value="5">Not at all (5)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>3. How often did asthma symptoms wake you at night?</label>
+                                <select class="form-input" data-section="${section}" data-field="q3">
+                                    <option value="">-</option>
+                                    <option value="1">4 or more nights a week (1)</option>
+                                    <option value="2">2 to 3 nights a week (2)</option>
+                                    <option value="3">Once a week (3)</option>
+                                    <option value="4">Once or twice (4)</option>
+                                    <option value="5">Not at all (5)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>4. How often have you used your rescue inhaler?</label>
+                                <select class="form-input" data-section="${section}" data-field="q4">
+                                    <option value="">-</option>
+                                    <option value="1">3 or more times per day (1)</option>
+                                    <option value="2">1 or 2 times per day (2)</option>
+                                    <option value="3">2 or 3 times per week (3)</option>
+                                    <option value="4">Once a week or less (4)</option>
+                                    <option value="5">Not at all (5)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>5. How would you rate your asthma control?</label>
+                                <select class="form-input" data-section="${section}" data-field="q5">
+                                    <option value="">-</option>
+                                    <option value="1">Not controlled at all (1)</option>
+                                    <option value="2">Poorly controlled (2)</option>
+                                    <option value="3">Somewhat controlled (3)</option>
+                                    <option value="4">Well controlled (4)</option>
+                                    <option value="5">Completely controlled (5)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded">
+                            <strong>ACT Score:</strong> <span id="act-total">0</span>/25
+                        </div>
+                    </div>
+                `;
+
+            case 'triggerIdentification':
+            case 'triggerAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Identified Triggers (check all that apply)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="allergens" data-section="${section}"> Allergens (pollen, dust, pet dander)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="exercise" data-section="${section}"> Exercise</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="cold" data-section="${section}"> Cold air/weather changes</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="smoke" data-section="${section}"> Smoke/air pollution</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="infections" data-section="${section}"> Respiratory infections</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="stress" data-section="${section}"> Stress/emotions</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="medications" data-section="${section}"> Medications (NSAIDs, beta-blockers)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="occupational" data-section="${section}"> Occupational exposures</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Trigger Avoidance Plan</label>
+                            <textarea rows="3" placeholder="Specific strategies to avoid/manage triggers..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="avoidance_plan"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'actionPlan':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-green-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Asthma Action Plan Review</h4>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Written Action Plan</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center"><input type="radio" name="action-plan" value="yes" class="mr-2" data-section="${section}"> Has written plan</label>
+                                <label class="flex items-center"><input type="radio" name="action-plan" value="no" class="mr-2" data-section="${section}"> No plan - provided today</label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-green-100 p-3 rounded">
+                                <h5 class="font-semibold text-sm mb-2">Green Zone (Good Control)</h5>
+                                <textarea rows="3" placeholder="Usual medications, peak flow >80%..." class="w-full px-2 py-1 border rounded text-sm" data-section="${section}" data-field="green_zone"></textarea>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded">
+                                <h5 class="font-semibold text-sm mb-2">Yellow Zone (Caution)</h5>
+                                <textarea rows="3" placeholder="Increase medications, peak flow 50-80%..." class="w-full px-2 py-1 border rounded text-sm" data-section="${section}" data-field="yellow_zone"></textarea>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded">
+                                <h5 class="font-semibold text-sm mb-2">Red Zone (Emergency)</h5>
+                                <textarea rows="3" placeholder="Take rescue meds, call 911 if..." class="w-full px-2 py-1 border rounded text-sm" data-section="${section}" data-field="red_zone"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            // Prenatal Visit
+            case 'gestationalAge':
+            case 'obHistory':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-pink-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Obstetric History & Dating</h4>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">LMP (Last Menstrual Period)</label>
+                                <input type="date" class="form-input" data-section="${section}" data-field="lmp">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">EDD (Estimated Due Date)</label>
+                                <input type="date" class="form-input" data-section="${section}" data-field="edd">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Current GA</label>
+                                <input type="text" placeholder="24w 3d" class="form-input" data-section="${section}" data-field="ga">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Gravida</label>
+                                <input type="number" placeholder="G" class="form-input" data-section="${section}" data-field="gravida">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Para</label>
+                                <input type="number" placeholder="P" class="form-input" data-section="${section}" data-field="para">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Term</label>
+                                <input type="number" placeholder="T" class="form-input" data-section="${section}" data-field="term">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Preterm</label>
+                                <input type="number" placeholder="P" class="form-input" data-section="${section}" data-field="preterm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Previous Pregnancy Complications</label>
+                            <textarea rows="2" placeholder="Gestational diabetes, preeclampsia, cesarean..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="complications"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'fetalHeartTones':
+            case 'fetalAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">FHT (Fetal Heart Tones)</label>
+                                <input type="number" placeholder="140 bpm" class="form-input" data-section="${section}" data-field="fht">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">FHT Location</label>
+                                <input type="text" placeholder="LLQ" class="form-input" data-section="${section}" data-field="location">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Fetal Movement</label>
+                            <select class="form-input" data-section="${section}" data-field="movement">
+                                <option value="">Select...</option>
+                                <option value="active">Active - normal movement</option>
+                                <option value="decreased">Decreased movement</option>
+                                <option value="not-yet">Not yet felt (early pregnancy)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Fundal Height</label>
+                            <div class="flex gap-4 items-center">
+                                <input type="number" placeholder="24" class="form-input w-24" data-section="${section}" data-field="fundal_height">
+                                <span class="text-sm">cm (should match weeks ± 2cm after 20 weeks)</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            case 'prenatalEducation':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Education Topics Discussed (check all)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="nutrition" data-section="${section}"> Prenatal nutrition</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="vitamins" data-section="${section}"> Prenatal vitamins</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="warning-signs" data-section="${section}"> Warning signs (bleeding, contractions)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="fetal-movement" data-section="${section}"> Kick counts/fetal movement</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="labor" data-section="${section}"> Labor signs</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="breastfeeding" data-section="${section}"> Breastfeeding</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="birth-plan" data-section="${section}"> Birth plan discussion</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="postpartum" data-section="${section}"> Postpartum care</label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            // Well Child Visit
+            case 'measurements':
+            case 'growthCharts':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Growth Measurements</h4>
+                        </div>
+                        <div class="grid grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Weight</label>
+                                <div class="flex gap-2">
+                                    <input type="number" step="0.1" placeholder="15.2" class="form-input" data-section="${section}" data-field="weight">
+                                    <select class="form-input w-20" data-section="${section}" data-field="weight_unit">
+                                        <option value="kg">kg</option>
+                                        <option value="lb">lb</option>
+                                    </select>
+                                </div>
+                                <input type="text" placeholder="50th percentile" class="form-input text-sm mt-1" data-section="${section}" data-field="weight_percentile">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Length/Height</label>
+                                <div class="flex gap-2">
+                                    <input type="number" step="0.1" placeholder="75" class="form-input" data-section="${section}" data-field="height">
+                                    <select class="form-input w-20" data-section="${section}" data-field="height_unit">
+                                        <option value="cm">cm</option>
+                                        <option value="in">in</option>
+                                    </select>
+                                </div>
+                                <input type="text" placeholder="50th percentile" class="form-input text-sm mt-1" data-section="${section}" data-field="height_percentile">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Head Circumference</label>
+                                <div class="flex gap-2">
+                                    <input type="number" step="0.1" placeholder="45" class="form-input" data-section="${section}" data-field="head_circ">
+                                    <span class="self-center text-sm">cm</span>
+                                </div>
+                                <input type="text" placeholder="50th percentile" class="form-input text-sm mt-1" data-section="${section}" data-field="hc_percentile">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">BMI (if age 2+)</label>
+                                <input type="number" step="0.1" placeholder="16.5" class="form-input" data-section="${section}" data-field="bmi">
+                                <input type="text" placeholder="50th percentile" class="form-input text-sm mt-1" data-section="${section}" data-field="bmi_percentile">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Growth Trend</label>
+                            <textarea rows="2" placeholder="Following growth curve appropriately, appropriate weight gain..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="trend"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'developmentalScreening':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-indigo-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Developmental Screening</h4>
+                            <p class="text-xs text-gray-600">ASQ, M-CHAT, or other age-appropriate tool</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Screening Tool Used</label>
+                            <select class="form-input" data-section="${section}" data-field="tool">
+                                <option value="">Select...</option>
+                                <option value="asq">ASQ (Ages & Stages Questionnaire)</option>
+                                <option value="mchat">M-CHAT (autism screening, 18-24 mo)</option>
+                                <option value="peds">PEDS (Parents' Evaluation)</option>
+                                <option value="denver">Denver Developmental Screening</option>
+                                <option value="clinical">Clinical observation</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Developmental Domains (check if appropriate for age)</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="gross-motor" data-section="${section}"> Gross motor</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="fine-motor" data-section="${section}"> Fine motor</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="language" data-section="${section}"> Language/communication</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="social" data-section="${section}"> Social-emotional</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="cognitive" data-section="${section}"> Cognitive/problem-solving</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Results/Concerns</label>
+                            <textarea rows="3" placeholder="Meeting all milestones, or describe concerns and referrals..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="results"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'anticipatoryGuidance':
+            case 'safetyGuidance':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Age-Specific Guidance Provided (check all)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="car-seat" data-section="${section}"> Car seat safety</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="home-safety" data-section="${section}"> Home safety (outlets, gates, locks)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="sleep" data-section="${section}"> Safe sleep (back to sleep)</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="nutrition" data-section="${section}"> Age-appropriate nutrition</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="discipline" data-section="${section}"> Positive discipline</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="screen-time" data-section="${section}"> Screen time limits</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="dental" data-section="${section}"> Dental care</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="sun-safety" data-section="${section}"> Sun protection</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Next Developmental Milestone to Expect</label>
+                            <textarea rows="2" placeholder="Walking independently, first words, potty training..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="next_milestone"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            // Post-Operative Follow-up
+            case 'surgeryReview':
+            case 'surgicalSummary':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Surgical Procedure Review</h4>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Procedure</label>
+                                <input type="text" placeholder="Right knee arthroscopy" class="form-input" data-section="${section}" data-field="procedure">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Date of Surgery</label>
+                                <input type="date" class="form-input" data-section="${section}" data-field="surgery_date">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Surgeon</label>
+                            <input type="text" placeholder="Dr. Smith" class="form-input" data-section="${section}" data-field="surgeon">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Intraoperative Complications</label>
+                            <select class="form-input" data-section="${section}" data-field="complications">
+                                <option value="">Select...</option>
+                                <option value="none">None</option>
+                                <option value="minor">Minor complications</option>
+                                <option value="major">Major complications</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Operative Findings/Notes</label>
+                            <textarea rows="2" placeholder="Summary from op note..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="findings"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'woundAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Incision Appearance</label>
+                                <select class="form-input" data-section="${section}" data-field="appearance">
+                                    <option value="">Select...</option>
+                                    <option value="clean-dry">Clean and dry</option>
+                                    <option value="minimal-drainage">Minimal drainage</option>
+                                    <option value="erythema">Erythema/redness</option>
+                                    <option value="purulent">Purulent drainage</option>
+                                    <option value="dehiscence">Wound dehiscence</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Sutures/Staples</label>
+                                <select class="form-input" data-section="${section}" data-field="closure">
+                                    <option value="">Select...</option>
+                                    <option value="intact">Intact</option>
+                                    <option value="removed">Removed today</option>
+                                    <option value="absorbable">Absorbable</option>
+                                    <option value="steri-strips">Steri-strips</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Signs of Infection</label>
+                                <select class="form-input" data-section="${section}" data-field="infection">
+                                    <option value="">Select...</option>
+                                    <option value="none">None</option>
+                                    <option value="suspected">Suspected - empiric treatment</option>
+                                    <option value="confirmed">Confirmed infection</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Wound Care Instructions</label>
+                            <textarea rows="2" placeholder="Keep clean and dry, change dressing daily..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="care_instructions"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'painManagement':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Pain Level (0-10)</label>
+                                <input type="number" min="0" max="10" placeholder="3" class="form-input" data-section="${section}" data-field="pain_score">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Pain Control</label>
+                                <select class="form-input" data-section="${section}" data-field="control">
+                                    <option value="">Select...</option>
+                                    <option value="excellent">Excellent control</option>
+                                    <option value="good">Good control</option>
+                                    <option value="fair">Fair - needs adjustment</option>
+                                    <option value="poor">Poor - inadequate relief</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Opioid Use</label>
+                                <select class="form-input" data-section="${section}" data-field="opioid">
+                                    <option value="">Select...</option>
+                                    <option value="none">Not using</option>
+                                    <option value="weaning">Weaning off</option>
+                                    <option value="stable">Stable use</option>
+                                    <option value="increasing">Increasing use - concerns</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Current Pain Medications</label>
+                            <textarea rows="2" placeholder="Oxycodone 5mg PRN, Tylenol 1000mg TID..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="medications"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Side Effects</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="none" data-section="${section}"> None</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="nausea" data-section="${section}"> Nausea</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="constipation" data-section="${section}"> Constipation</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="drowsiness" data-section="${section}"> Drowsiness</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="itching" data-section="${section}"> Itching</label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            case 'activityRestrictions':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Current Restrictions (check all that apply)</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="lifting" data-section="${section}"> No lifting >10 lbs</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="driving" data-section="${section}"> No driving</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="work" data-section="${section}"> Off work</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="sports" data-section="${section}"> No sports/exercise</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="weight-bearing" data-section="${section}"> Limited weight-bearing</label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Return to Work</label>
+                                <input type="date" class="form-input" data-section="${section}" data-field="rto_work_date">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Return to Full Activity</label>
+                                <input type="date" class="form-input" data-section="${section}" data-field="full_activity_date">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Activity Instructions</label>
+                            <textarea rows="2" placeholder="Physical therapy 3x/week, gradual return to activities..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="instructions"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            // Geriatric Assessment
+            case 'mobilityAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-teal-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Mobility & Physical Function</h4>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Gait Speed (4-meter walk)</label>
+                                <input type="number" step="0.1" placeholder="0.8 m/s" class="form-input" data-section="${section}" data-field="gait_speed">
+                                <p class="text-xs text-gray-600 mt-1">&lt;0.8 m/s = high fall risk</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">TUG Test (Timed Up and Go)</label>
+                                <input type="number" step="0.1" placeholder="12 seconds" class="form-input" data-section="${section}" data-field="tug">
+                                <p class="text-xs text-gray-600 mt-1">&gt;12 seconds = fall risk</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Assistive Devices</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="none" data-section="${section}"> None</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="cane" data-section="${section}"> Cane</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="walker" data-section="${section}"> Walker</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="wheelchair" data-section="${section}"> Wheelchair</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Balance Concerns</label>
+                            <textarea rows="2" placeholder="Unsteady gait, requires assistance, home modifications needed..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="balance_notes"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'polypharmacyReview':
+                return `
+                    <div class="space-y-4">
+                        <div class="bg-orange-50 p-3 rounded mb-3">
+                            <h4 class="font-semibold text-sm">Polypharmacy Review</h4>
+                            <p class="text-xs text-gray-600">Beers Criteria and medication appropriateness</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Total Medications</label>
+                                <input type="number" placeholder="12" class="form-input" data-section="${section}" data-field="total_meds">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Beers Criteria Medications</label>
+                                <input type="number" placeholder="2" class="form-input" data-section="${section}" data-field="beers_count">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Potentially Inappropriate Medications (PIMs)</label>
+                            <textarea rows="2" placeholder="Benzodiazepines, anticholinergics, NSAIDs..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="pims"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Deprescribing Recommendations</label>
+                            <textarea rows="2" placeholder="Discontinue diphenhydramine, taper benzodiazepine..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="deprescribe"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Drug-Drug Interactions</label>
+                            <textarea rows="2" placeholder="Review for interactions..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="interactions"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'nutritionAssessment':
+                return `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Weight Change</label>
+                                <select class="form-input" data-section="${section}" data-field="weight_change">
+                                    <option value="">Select...</option>
+                                    <option value="stable">Stable</option>
+                                    <option value="loss">Unintentional loss</option>
+                                    <option value="gain">Weight gain</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Appetite</label>
+                                <select class="form-input" data-section="${section}" data-field="appetite">
+                                    <option value="">Select...</option>
+                                    <option value="good">Good appetite</option>
+                                    <option value="fair">Fair appetite</option>
+                                    <option value="poor">Poor appetite</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Dental Health</label>
+                                <select class="form-input" data-section="${section}" data-field="dental">
+                                    <option value="">Select...</option>
+                                    <option value="good">Good dentition</option>
+                                    <option value="dentures">Dentures</option>
+                                    <option value="poor">Poor dental health</option>
+                                    <option value="painful">Painful chewing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Nutritional Concerns</label>
+                            <textarea rows="2" placeholder="Malnutrition risk, difficulty shopping/cooking, supplement needs..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="concerns"></textarea>
+                        </div>
+                    </div>
+                `;
+
+            case 'socialSupport':
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Living Situation</label>
+                            <select class="form-input" data-section="${section}" data-field="living">
+                                <option value="">Select...</option>
+                                <option value="alone">Lives alone</option>
+                                <option value="spouse">Lives with spouse/partner</option>
+                                <option value="family">Lives with family</option>
+                                <option value="facility">Assisted living/facility</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Primary Caregiver</label>
+                            <input type="text" placeholder="Daughter, spouse, etc." class="form-input" data-section="${section}" data-field="caregiver">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Home Services</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="home-health" data-section="${section}"> Home health</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="meals-on-wheels" data-section="${section}"> Meals on Wheels</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="homemaker" data-section="${section}"> Homemaker services</label>
+                                <label class="flex items-center"><input type="checkbox" class="mr-2" value="transportation" data-section="${section}"> Transportation assistance</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Safety Concerns</label>
+                            <textarea rows="2" placeholder="Fall risk at home, isolation, elder abuse screening..." class="w-full px-3 py-2 border rounded-lg" data-section="${section}" data-field="safety"></textarea>
+                        </div>
+                    </div>
+                `;
             
             default:
                 return `
